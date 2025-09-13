@@ -1,0 +1,37 @@
+\section{Dispositivos Qu\^{a}nticos}
+\label{sec: dispositivosQuanticos}
+
+\subsection{Simuladores}
+\label{subSec: simuladores}
+
+Para avaliar o desempenho do algoritmo de Grover em condições que refletem as imperfeições de um dispositivo qu\^{a}ntico real, ser\'{a} utilizado o simulador \emph{AerSimulator} \cite{qiskit_aersimulator}, uma classe pertencente ao \emph{Qiskit Aer} \cite{qiskit_aer}, que, por sua vez, \'{e} um módulo do \emph{Qiskit}. Este simulador possibilita a emulaç\~{a}o de circuitos qu\^{a}nticos com a inclus\~{a}o de modelos de ruído específicos de cada QPU, proporcionando uma an\'{a}lise mais realista do algoritmo desenvolvido. Isso ocorre porque o \emph{AerSimulator} \'{e} capaz de reproduzir, de forma aproximada, o comportamento de dispositivos reais, previamente selecionados, permitindo avaliar o desempenho do algoritmo de Grover sob as limitações físicas e operacionais típicas do \textit{hardware} qu\^{a}ntico. Para fins de comparaç\~{a}o, ser\~{a}o utilizados os modelos de ruído correspondentes aos mesmos dispositivos qu\^{a}nticos (\textit{backends}) reais que, posteriormente, computar\~{a}o o algoritmo.
+
+\subsection{Computadores}
+\label{subSec: computadores}
+
+Para realizar os testes, foram utilizados dois diferentes \textit{backends}: \href{https://quantum.cloud.ibm.com/computers?system=ibm_brisbane}{ibm\_brisbane} e \href{https://quantum.cloud.ibm.com/computers?system=ibm_torino}{ibm\_torino}. O \textit{ibm\_brisbane} é um processador baseado na tecnologia Eagle r3, com $127$ \textit{qubits} e conectividade otimizada para execução de circuitos de médio porte. Já o \textit{ibm\_torino} é um dispositivo mais recente, baseado na arquitetura Heron r1, com $133$ \textit{qubits} e melhorias no tempo de coerência e fidelidade de portas. Todos s\~{a}o de acesso livre atrav\'{e}s do serviço de computaç\~{a}o em nuvem IBM Quantum \cite{IBM_resources}.
+
+Esses \textit{backends} correspondem a Processadores Qu\^{a}nticos (QPUs) supercondutores que operam com qubits físicos implementados por circuitos de transmon. A IBM disponibiliza informações detalhadas sobre cada um de seus dispositivos, incluindo a topologia de acoplamento, as portas qu\^{a}nticas nativas, bem como m\'{e}tricas importantes para a execuç\~{a}o de algoritmos, como tempos de coer\^{e}ncia ($T_1$  e $T_2$), fidelidades de operaç\~{a}o e taxas de erro de leitura \cite{IBM_backends}.
+
+O uso desses \textit{backends} permite avaliar o desempenho do algoritmo de Grover n\~{a}o apenas em ambientes simulados, mas tamb\'{e}m em dispositivos físicos sujeitos a ruído real, decoer\^{e}ncia e demais limitações tecnológicas inerentes aos atuais computadores qu\^{a}nticos de uso geral \cite{Preskill2018_NISQ}. Al\'{e}m disso, cada \textit{backend} possui configurações distintas de conectividade entre qubits e diferentes níveis de fidelidade operacional, o que possibilita uma an\'{a}lise comparativa do impacto dessas vari\'{a}veis na execuç\~{a}o do algoritmo. O Quadro~\ref{tab: backends} mostra como exemplo, dois \textit{backends} disponíveis na \textit{IBM Quantum Platform}, e que serão utilizados tanto para simulações quanto para as execuções nas QPU's reais. 
+
+\begin{quadro}[htb!]
+  \begin{center}
+    \caption{Configurações dos Computadores Qu\^{a}nticos utilizados} 
+    \label{tab: backends}
+    \vspace{0.2cm}
+    \footnotesize
+    \begin{tabular}{|lcccc|}
+      \hline
+      Backends & $\text{N}^\circ$ qubits & CLOPS & QPU & Portas Base \\
+      % \hline
+      \hline
+      ibm\_brisbane & 127 & 180k & Eagle r3 & ECR, ID, RZ, SX, X \\
+      ibm\_torino & 133 & 210k & Heron r1 & CZ, ID, RX, RZ, RZZ, SX, X \\
+      \hline 
+    \end{tabular}
+  \end{center}
+  \centering {\small Fonte: \cite{IBM_resources}} %Fonte do quadro
+\end{quadro}
+
+Nesse quadro pode-se analisar a quantidade de \textit{qubits} ($\text{N}^\circ$ qubits), o número de CLOPS\footnote{CLOPS é uma métrica criada pela IBM para medir quantas camadas de portas quânticas um processador consegue executar por segundo. Camadas, por sua vez, são as operações que podem ser executadas em paralelo, \textit{i. e.}, portas lógicas atuando em diferentes canais (\textit{qubits}) de forma independente podem ser executados ao mesmo tempo.} (\textit{Circuit Layer Operations Per Second}), o tipo de processador (QPU) e as portas base\footnote{Portas Base, ou \textit{basis gates}, representam o conjunto de operações nativas que um processador quântico consegue executar diretamente no \textit{hardware}, \textit{i. e.} as portas que não precisam ser reescritas no processo de compilação do circuito virtual para o físico.} de cada \textit{backend}.

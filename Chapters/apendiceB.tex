@@ -1,0 +1,23 @@
+\apendice{Reconstrução de Probabilidades Multi-Qubit a partir do \texttt{Estimator}}
+\label{ap: apendiceB}
+
+Ao utilizar o \texttt{Estimator} do \textit{Qiskit}, o resultado retornado consiste nos valores esperados dos operadores de medição, tipicamente expressos em termos de combinações de observáveis do tipo $Z_i$, onde $Z$ é o operador de Pauli-$Z$. 
+
+Para um sistema de $n$ \textit{qubits}, a base computacional $\{\ket{0}, \ket{1}\}$ é associada aos autovalores $+1$ e $-1$ do operador $Z$, respectivamente. Assim, a probabilidade de cada estado base pode ser reconstruída a partir das médias dos produtos de operadores $Z$.
+
+Para o caso de $n=4$, é necessário obter:
+\begin{itemize}
+    \item As expectativas de 1 ponto: $\langle Z_0 \rangle, ~\langle Z_1 \rangle,~ \langle Z_2 \rangle,~ \langle Z_3 \rangle$.
+    \item As expectativas de 2 pontos: $\langle Z_0 Z_1 \rangle,~ \langle Z_0 Z_2 \rangle,~ \dots$.
+    \item As expectativas de 3 pontos: $\langle Z_0 Z_1 Z_2 \rangle,~ \dots$.
+    \item A expectativa de 4 pontos: $\langle Z_0 Z_1 Z_2 Z_3 \rangle$.
+\end{itemize}
+
+A fórmula geral para reconstruir a probabilidade $P(b_0 b_1 b_2 b_3)$, onde $b_k \in \{0,1\}$, é:
+\begin{equation}
+P(b_0 b_1 b_2 b_3) = \frac{1}{16} \sum_{s_0=0}^1 \sum_{s_1=0}^1 \sum_{s_2=0}^1 \sum_{s_3=0}^1 
+\left[ \prod_{j=0}^3 (-1)^{b_j s_j} \right] \langle Z_0^{s_0} Z_1^{s_1} Z_2^{s_2} Z_3^{s_3} \rangle
+\end{equation}
+onde $Z_j^0 = I$ (identidade no \textit{qubit} $j$) e $Z_j^1 = Z_j$.
+
+Este método é uma aplicação direta da transformada inversa de Walsh–Hadamard sobre as expectativas, convertendo-as em probabilidades na base computacional.

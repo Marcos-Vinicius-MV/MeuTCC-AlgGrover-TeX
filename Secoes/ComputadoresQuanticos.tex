@@ -1,0 +1,163 @@
+\section{Plataforma \textit{IBM Quantum}}
+\label{sec: plataformaIBM}
+
+Nesta seção, descreve-se e elucida-se por meio de trechos de códigos exemplos o procedimento adotado para o acesso e preparação da simulação do circuito do Algoritmo de Grover utilizando os recursos computacionais da \textit{IBM Quantum Platform} \cite{IBM_quantum}. Essa plataforma online desenvolvida pela IBM permite a execução de algoritmos em computadores quânticos reais e simuladores avançados disponíveis na nuvem.
+
+O primeiro passo consiste na criação de uma conta na plataforma e posterior autenticação com uma organização habilitada. Dentro do ambiente web, o usuário pode configurar projetos e acessar diferentes dispositivos quânticos, incluindo simuladores ideais (sem ruído), simuladores com ruído e \textit{hardwares} reais. Cada projeto está vinculado a uma \textit{instância}, que define os recursos disponíveis, como prioridade de fila e acesso a dispositivos específicos.
+
+Diferentemente dos ambientes locais de simulação, como os disponíveis via \texttt{AerSimulator} no \textit{Qiskit}, a \textit{IBM Quantum} exige que até mesmo as simulações ideais sejam submetidas remotamente, exigindo autenticação prévia e conexão à nuvem. Com a migração da plataforma para o novo modelo unificado, o canal de acesso deve ser definido como \verb|ibm_quantum_platform|, e é obrigatória a definição explícita da \textit{instância}.
+
+\subsection{Procedimento de Autenticação}
+\label{subSec: auth}
+
+A seguir, a Figura~\ref{cod: acessaIBM} apresenta um exemplo do código utilizado para salvar e autenticar uma conta na plataforma, utilizando a biblioteca \verb|qiskit_ibm_runtime|:
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho de acesso à \textit{IBM Quantum Platform}.} 
+\begin{minted}{python}
+from qiskit_ibm_runtime import QiskitRuntimeService
+
+QiskitRuntimeService.save_account(
+    token="<seu_token>",
+    instance="<sua_instancia>",
+    channel="ibm_quantum_platform",
+    overwrite=True,
+    set_as_default=True
+)
+service = QiskitRuntimeService()
+\end{minted} 
+{\small Fonte: do autor} 
+\label{cod: acessaIBM} 
+\end{figure}
+
+O \texttt{token} pode ser obtido no perfil do usuário na plataforma, enquanto a \texttt{instance} segue o padrão \texttt{<hub>/<group>/<project>}, que pode ser consultado no painel de gerenciamento de projetos da \textit{IBM Quantum Platform}. A chamada \verb|set_as_default=True| permite que o serviço seja usado diretamente nos próximos acessos, sem necessidade de repetir a autenticação.
+
+Após essa configuração inicial, torna-se possível listar os dispositivos disponíveis, verificar seus estados (como filas, fidelidades e número de qubits), selecionar o \textit{backend} desejado e submeter os circuitos para execução.
+
+\subsection*{Fluxo de Execução na Nuvem}
+
+O processo completo de execução de um circuito na plataforma envolve:
+
+\begin{itemize}
+    \item Construção do circuito com bibliotecas do \texttt{Qiskit};
+    \item Escolha do \textit{backend} apropriado (simulador ou QPU);
+    \item Submissão da tarefa à nuvem via \texttt{QiskitRuntimeService};
+    \item Acompanhamento da execução e análise dos resultados.
+\end{itemize}
+
+\subsection{Simulação Ideal via \texttt{Statevector}}
+\label{subSec: simulacaoIdeal}
+
+Essa seção traz um exemplo de código que gera uma distribuição de probabilidades ideal, utilizando a classe \texttt{Statevector} do \texttt{Qiskit}, apresentada na Figura~\ref{cod: simulacaoIdeol}, que simula a evolução do estado quântico de forma exata e livre de ruído. Essa abordagem fornece a expectativa teórica para o comportamento do algoritmo de Grover.
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho para Simulação Ideal.} 
+\begin{minted}{python}
+from qiskit.quantum_info import Statevector
+ideal_distribution = Statevector.
+                     from_instruction(QC_Grover).
+                     probabilities_dict()
+fig, ax = plt.subplots()
+plot_histogram(ideal_distribution, 
+               title="Distribuição Ideal de Probabilidades",
+               ax=ax)
+ax.set_ylabel("Probabilidade")
+plt.show()
+\end{minted}
+{\small Fonte: do autor} 
+\label{cod: simulacaoIdeol} 
+\end{figure}
+
+Este resultado serve como referência teórica da máxima fidelidade, permitindo a comparação com as demais execuções e a análise da influência dos ruídos nos sistemas quânticos reais.
+
+\subsection{Simulação com Ruído via \textit{AerSimulator}}
+\label{subSec: simulacaoRuido}
+
+Essa seção apresenta uma simulação mais próxima da realidade, pois faz uso de informações de ruído da QPU escolhida (definindo \texttt{<nome\_backend>}). Para isso, utiliza a classe \texttt{AerSimulator}, da biblioteca \texttt{qiskit\_aer}. O código exemplo é mostrado na Figura~\ref{cod: simulacaoRuido}. Essa é uma forma de criar uma simulação que busca imitar de forma mais precisa o comportamento prático do circuito, uma vez que a simulação com ruído permite observar a degradação de fidelidade causada por imperfeições reais nos dispositivos quânticos.
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho para Simulação com Ruído.} 
+\begin{minted}{python}
+from qiskit_aer import AerSimulator
+from qiskit.compiler import transpile
+
+service = QiskitRuntimeService()
+backend = service.backend('<nome_backend>')
+
+# Gerar simulador com modelo de ruído real
+backend_sim = AerSimulator.from_backend(backend)
+transpiled_circ_sim = transpile(QC_Grover, backend_sim)
+result = backend_sim.run(transpiled_circ_sim, shots=<num_shots>).result()
+circuits.append(transpiled_circ_sim)
+\end{minted}
+{\small Fonte: do autor} 
+\label{cod: simulacaoRuido} 
+\end{figure}
+
+Essa abordagem é valiosa para testar e validar circuitos antes da submissão ao \textit{hardware} físico, permitindo ajustes e observação de efeitos de ruído específicos, como erros de porta, leitura e decoerência.
+
+\subsection{Execução em  via \texttt{Sampler}}
+\label{subSec: execucaoQPU}
+
+Por fim, essa última seção traz os procedimentos a serem realizados para a execução em uma QPU. Antes de o circuito ser enviado a alguma QPU propriamente dita, ele precisa ser reescrito em uma linguagem que ela entenda, \textit{i. e.}, o circuito virtual precisa ser reescrito em termos das portas base do \textit{backend} no qual se pretende enviá-lo. Essa é a etapa de compilação mencionada na Seção~\ref{subSec: computadores} e sua implementação é feita com a função \texttt{transpile} conforme mostrado na Figura~\ref{cod: compilacao}.
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho para Compilação.} 
+\begin{minted}{python}
+from qiskit.compiler import transpile
+
+backend_HW = service.backend("<nome_backend>")
+transpiled = transpile(QC_Grover, backend_HW, optimization_level=<optim_lvl>)
+\end{minted}
+{\small Fonte: do autor} 
+\label{cod: compilacao} 
+\end{figure}
+
+A definição de <\texttt{nome\_backend}> é o que garante a compilação ideal de acordo com as portas base de cada \textit{backend}, visto que cada tipo de processador pode possuir portas base diferentes. Pode-se também configurar o nível de otimização, explanado na Seção~\ref{subSubSec: otimizacao}, por meio de \texttt{optimization\_level}. Concluída essa etapa, segue-se com o circuito compilado.
+
+A Figura~\ref{cod: execucaoSampler} mostra um trecho de exemplo para execução em QPU's que possibilita também utilizar as técnicas de supressão -- \textit{Dynamical Decoupling} (DD) e \textit{Pauli Twirling} introduzidas na Seção~\ref{subSec: supressao} -- disponíveis na classe \texttt{Sampler} da biblioteca \texttt{qiskit\_ibm\_runtime}.
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho para Execução em QPU via \texttt{Sampler}.} 
+\begin{minted}{python}
+from qiskit_ibm_runtime import SamplerV2 as Sampler, Batch
+
+def rodar():
+    num_shots = <num_shots>
+    with Batch(backend=backend_HW):
+        sampler = Sampler()
+        # Execução com Dynamical Decoupling + Pauli Twirling
+        sampler.options.dynamical_decoupling.enable = True
+        sampler.options.twirling.enable_gates = True
+        job_DD_Twiling = sampler.run([transpiled], shots=num_shots)
+try:
+    rodar()
+except Exception as e:
+    print(f"Erro: {e}")
+\end{minted}
+{\small Fonte: do autor} 
+\label{cod: execucaoSampler} 
+\end{figure}
+
+A Figura~\ref{cod: execucaoEstimate}, por sua vez, mostra um trecho de exemplo para execução em QPU's que possibilita utilizar as técnicas de mitigação -- \textit{Twirled Readout Error eXtinction} (TREX), \textit{Zero-Noise Extrapolation} (ZNE), \textit{Probabilistic Error Amplification} (PEA), e \textit{Probabilistic Error Cancellation} (PEA) introduzidas na Seção~\ref{subSec: mitigacao} -- disponíveis na classe \texttt{Estimate} da biblioteca \texttt{qiskit\_ibm\_runtime}.
+
+\begin{figure}[!htb]
+\centering
+\caption{Trecho para Execução em QPU via \texttt{Estimate}.} 
+\begin{minted}{python}
+
+COLOCAR CODIGO COM ESTIMATE***
+
+\end{minted}
+{\small Fonte: do autor} 
+\label{cod: execucaoEstimate} 
+\end{figure}
+
+A execução real permite não apenas verificar a eficiência do algoritmo em ambiente prático, mas também comparar os efeitos das técnicas de supressão aplicadas, ajudando a entender o comportamento dos sistemas quânticos sob influência de ruído quântico.
+
+

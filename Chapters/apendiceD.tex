@@ -1,0 +1,53 @@
+\apendice{Reconstrução de probabilidades multi-qubit a partir de valores esperados}
+\label{ap: apendiceD}
+
+Ao utilizar o \texttt{Estimator} do Qiskit, obtém-se diretamente os valores esperados \(\langle P \rangle\) de operadores de Pauli sobre o estado quântico final do circuito, sem acessar diretamente as contagens (\textit{counts}). Entretanto, é possível reconstruir a distribuição de probabilidades dos estados computacionais a partir desses valores esperados.
+
+Para um sistema de \(n\) qubits, a matriz densidade \(\rho\) pode ser expandida na base de Pauli:
+%
+\[
+\rho = \frac{1}{2^n} \sum_{P \in \mathcal{P}^n} \langle P \rangle \, P
+\]
+
+onde:
+
+- \(\mathcal{P} = \{I, X, Y, Z\}\) é o conjunto dos operadores de Pauli de um único qubit.
+
+- \(\mathcal{P}^n\) representa todos os produtos tensoriais possíveis desses operadores
+para \(n\) qubits.
+
+- \(\langle P \rangle = \mathrm{Tr}(\rho P)\) é o valor esperado do operador \(P\).
+
+A probabilidade \(p_x\) de observar o estado computacional \(\ket{x}\) (com \(x\) variando de \(0\) a \(2^n-1\)) é obtida por:
+%
+\[
+p_x = \bra{x} \rho \ket{x}
+\]
+
+Substituindo a expansão de \(\rho\), obtém-se:
+%
+\[
+p_x = \frac{1}{2^n} \sum_{P \in \mathcal{P}^n} \langle P \rangle \bra{x} P \ket{x}
+\]
+
+Observa-se que:
+
+- Apenas os operadores de Pauli contendo \(I\) e \(Z\) contribuem para \(p_x\), pois \(X\) e \(Y\) possuem elementos fora da diagonal.
+
+- Para cada qubit \(k\):
+\[
+\bra{b_k} Z \ket{b_k} = (-1)^{b_k}, \quad \bra{b_k} I \ket{b_k} = 1
+\]
+onde \(b_k \in \{0,1\}\) é o bit \(k\) do estado \(\ket{x}\).
+
+Portanto, para \(n=4\), a fórmula final torna-se:
+%
+\[
+p_x = \frac{1}{16} \sum_{P \in \{I,Z\}^4} \langle P \rangle \prod_{k=0}^{3} \left[ 
+\begin{cases}
+1, & P_k = I \\
+(-1)^{b_k}, & P_k = Z
+\end{cases} \right]
+\]
+
+Esse método permite reconstruir a distribuição completa de probabilidades apenas a partir dos valores esperados \(\langle P \rangle\) dos produtos tensoriais de operadores \(I\) e \(Z\), obtidos via \texttt{Estimator}.
