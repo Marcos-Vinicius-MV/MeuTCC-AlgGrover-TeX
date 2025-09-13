@@ -1,0 +1,17 @@
+# Arquivos temporários do LaTeX
+*.aux
+*.toc
+*.out
+*.log
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.lgg
+*.los
+
+# Diretórios temporários
+_build/
