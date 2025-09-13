@@ -228,7 +228,7 @@
 \setlength{\topmargin}{2cm}    % margem superior
 \newlength{\bottommargin}        % margem inferior eh deduzida em LaTeX
 \setlength{\bottommargin}{2cm} % margem inferior
-\setlength{\headheight}{14.5pt} % altura do cabecalho
+\setlength{\headheight}{15pt} % altura do cabecalho
 \setlength{\headsep}{1cm}    % espaco entre cabecalho e texto
 \setlength{\footskip}{4.5pt}  % espaco entre rodape e texto
 \setlength\textheight{ % altura disponivel para texto

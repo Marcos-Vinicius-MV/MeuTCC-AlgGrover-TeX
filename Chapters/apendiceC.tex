@@ -1,22 +1,22 @@
 \apendice{Demonstração da Porta \textit{MCZ} a partir de \textit{MCX} e \textit{Hadamard}}
-\label{ap: apendiceC}
+\label{ap:apendiceC}
 
 O objetivo deste apêndice é demonstrar que a porta Z-multi-controlada ($MCZ$) pode ser construída a partir de uma porta X-multi-controlada ($MCX$) e duas portas \textit{Hadamard} (\(H\)). A sequência é dada por:
 
 \begin{equation}
     MCZ = H~\text{MCX}~H
-    \label{eq: MCZ}
+    \label{eq:MCZ}
 \end{equation}
 
 onde \(H\) é a porta Hadamard aplicada no qubit alvo da $MCX$.
 
 \subsection*{Demonstração}
 
-A porta $MCZ$ que intenta-se criar possui alvo no último \textit{qubit} apenas, sendo assim, a aplicação das $H$'s deve acontecer somente no último canal. Em termos de portas lógicas e matrizes, isso implica que a Equação~\ref{eq: MCZ}, na verdade, é
+A porta $MCZ$ que intenta-se criar possui alvo no último \textit{qubit} apenas, sendo assim, a aplicação das $H$'s deve acontecer somente no último canal. Em termos de portas lógicas e matrizes, isso implica que a Equação~\ref{eq:MCZ}, na verdade, é
 
 \begin{equation}
     MCZ_{16x16} = (I \otimes I \otimes I \otimes H)~MCX_{16x16}~(I \otimes I \otimes I \otimes H)
-    \label{eq: MCZ 2}
+    \label{eq:MCZ 2}
 \end{equation}
 
 A matriz resultante da operação $(I \otimes I \otimes I \otimes H)$ é
@@ -49,7 +49,7 @@ Já a matriz de $MCX$ é
     _{16x16}
 \end{equation}
 
-Voltando à Equação~\ref{eq: MCZ 2}, precisamos fazer o produto
+Voltando à Equação~\ref{eq:MCZ 2}, precisamos fazer o produto
 As matrizes correspondentes a $X$, $Z$ e $H$ são, respectivamente
 
 Para um sistema com múltiplos qubits, considere uma MCX com \(n-1\) qubits de controle e 1 qubit alvo:
@@ -78,7 +78,7 @@ No Qiskit, podemos implementar a $MCZ$ usando a $MCX$ e portas Hadamard como seg
     \centering
     \caption{Implementação de porta $MCZ$ a partir de $MCX$ e $H$'s}
     \label{cod:apendiceC}
-    \begin{minted}{python}
+    \begin{lstlisting}{python}
         from qiskit import QuantumCircuit
         
         qc = QuantumCircuit(4)  # 3 controles + 1 alvo
@@ -86,5 +86,5 @@ No Qiskit, podemos implementar a $MCZ$ usando a $MCX$ e portas Hadamard como seg
         qc.mcx([0,1,2], 3)      # MCX com controles 0, 1 e 2 e alvo 3
         qc.h(3)                 # Hadamard no qubit alvo
         qc.draw('mpl')
-    \end{minted}
+    \end{lstlisting}
 \end{figure}
