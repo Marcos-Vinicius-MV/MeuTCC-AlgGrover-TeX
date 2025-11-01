@@ -1,5 +1,7 @@
-\section{Criando o Circuito Quântico Virtual}
-\label{sec: circuitoVirtual}
+\section{Circuito quântico virtual}
+\label{sec:circuitoVirtual}
+
+Um circuito quântico virtual refere‑se à representação lógica e idealizada de um algoritmo quântico, descrita em termos de \textit{qubits} e portas lógicas abstratas, independente das restrições físicas ou imperfeições de qualquer hardware específico. Esta abstração permite projetar e testar algoritmos em um ambiente ideal antes de considerar as limitações práticas da implementação em \textit{hardware} real, onde aspectos como conectividade entre \textit{qubits}, fidelidade de portas e decoerência precisam ser levados em conta.
 
 Nesta seção, serão apresentados de forma integrada os aspectos teóricos e computacionais da implementação do Algoritmo de Grover com $4$ qubits e que orientaram a construção do circuito quântico utilizado no processo. Serão apresentados, também, trechos de código escritos em \emph{Python} utilizando a biblioteca \emph{Qiskit}. A combinação entre fundamentação teórica e simulação computacional permite visualizar com clareza o funcionamento do algoritmo, cujo procedimento foi dividido em três etapas principais:
 \begin{enumerate}
@@ -11,7 +13,7 @@ Nesta seção, serão apresentados de forma integrada os aspectos teóricos e co
 Cada uma dessas etapas é descrita de forma detalhada em uma estrutura que visa garantir clareza na compreensão do funcionamento do circuito e posterior análise dos resultados.
 
 \subsection{Preparação Inicial do Circuito Quântico}
-\label{subSec: preparacaoInicialTeo}
+\label{subSec:preparacaoInicialTeo}
 
 A princípio, foi necessário determinar o Espaço de Pesquisa $\ket{s}$, \emph{i. e.}, criar uma superposição uniforme dos estados da base de $4$ qubits. Como sugere a Equação~\ref{eq:superposicao}, para $n=4$ qubits, o Espaço de Pesquisa possui $N = 2^4 = 16$ itens, e é dado por:
 %
@@ -68,9 +70,9 @@ A próxima etapa é a formação do espaço de pesquisa mencionado anteriormente
 \caption{Módulo Preparação Inicial} 
 \begin{lstlisting}{python}
 def inicializa_s(qc, qubits):
-    for qubit in qubits:
-        qc.h(qubit)
-    return qc
+   for qubit in qubits:
+      qc.h(qubit)
+   return qc
 \end{lstlisting} 
 {\small Fonte: do autor} 
 \label{cod:preparacao} 
@@ -90,9 +92,9 @@ Uma representação visual do circuito quântico virtual relativo a este trecho 
 \end{figure}
 %
 \subsection{Or\'{a}culo}
-\label{subSec: oraculoTeo}
+\label{subSec:oraculoTeo}
 
-Para dar prosseguimento, é preciso marcar o estado que se deseja obter, \emph{i. e.}, aplicar o \nameref{subSec: oraculoAlg} (Equaç\~{a}o~\ref{eq:fx Oraculo}) ao Espaço de Pesquisa (Equaç\~{a}o~\ref{eq:espacoPesquisa}). Seja $\omega = \ket{1111}$ o estado arbitrariamente escolhido para ser buscado, a aplicação do Oráculo é tal que
+Para dar prosseguimento, é preciso marcar o estado que se deseja obter, \emph{i. e.}, aplicar o \nameref{subSec:oraculoAlg} (Equaç\~{a}o~\ref{eq:fx Oraculo}) ao Espaço de Pesquisa (Equaç\~{a}o~\ref{eq:espacoPesquisa}). Seja $\omega = \ket{1111}$ o estado arbitrariamente escolhido para ser buscado, a aplicação do Oráculo é tal que
 %
 \begin{align}
     \notag
@@ -115,37 +117,35 @@ Que pode ser expresso de acordo com a matriz $16 \times 16$
     \label{mtx: aplicacaoOraculo}
 \end{equation*}
 
-O desafio seguinte foi determinar a(s) porta(s) lógica(s) que retorna(m) essa matriz. Para isso, pode-se seguir a regra de formação enunciada na Seção~\ref{subSec: oraculoAlg} do Capítulo~\nameref{chap:ferramentas}. Como o estado buscado é $\omega = \ket{1111}$, não será necessário o uso de portas $X$, apenas uma $MCZ$ (Equação~\ref{mtx: gateMCZ}) será suficiente, pois o resultado prático que se obtém com a aplicação da porta $MCZ$ é basicamente mudar a fase do último elemento da matriz $N \times N$ à qual ela for aplicada, exatamente o que se intenta obter; portanto, o Oráculo será uma porta $MCZ$.
+O desafio seguinte foi determinar a(s) porta(s) lógica(s) que retorna(m) essa matriz. Para isso, pode-se seguir a regra de formação enunciada na Seção~\ref{subSec:oraculoAlg} do Capítulo~\nameref{chap:ferramentas}. Como o estado buscado é $\omega = \ket{1111}$, não será necessário o uso de portas $X$, apenas uma $MCZ$ (Equação~\ref{mtx: gateMCZ}) será suficiente, pois o resultado prático que se obtém com a aplicação da porta $MCZ$ é basicamente mudar a fase do último elemento da matriz $N \times N$ à qual ela for aplicada, exatamente o que se intenta obter; portanto, o Oráculo será uma porta $MCZ$.
 
 Em \emph{Qiskit}, a implementação é feita com o módulo \verb|oraculo_Uw|, mostrado na Figura~\ref{cod:oraculo}. E o circuito quântico virtual relativo a este trecho é mostrado na Figura~\ref{fig:aplicacaoOraculo}\footnote
 {
-Como o \emph{Qiskit} não oferece suporte nativo à porta $MCZ$, ela é construída combinando portas $Hadamard$ e $MCX$, visto que $MCZ=H~MCX~H$ ($H$'s apenas no qubit alvo).
-
-[TALVEZ DEMONSTRAR NO APÊNDICE***]
-}.
+Como o \emph{Qiskit} não oferece suporte nativo à porta $MCZ$, ela é construída combinando portas $Hadamard$ e $MCX$, visto que $MCZ=H~MCX~H$ ($H$'s apenas no qubit alvo). A demonstração é feita no Apêndice~\ref{ap:apendiceC}.
+}
 
 \begin{figure}[!thb]
 \centering
 \caption{Módulo Oráculo} 
 \begin{lstlisting}{python}
 def mcz_circ(qc):
-    qc.h(3)
-    qc.mcx([0, 1, 2], 3)
-    qc.h(3)
-    return qc
-    
+   qc.h(3)
+   qc.mcx([0, 1, 2], 3)
+   qc.h(3)
+   return qc
+   
 def oraculo_Uw(qc, qubits, winner, QuantumCircuit):
-    for i, index in enumerate(winner):
-        if index == "0":
-            qc.x(i)
+   for i, index in enumerate(winner):
+      if index == "0":
+         qc.x(i)
 
-    # Para agrupar as portas H MCX H em uma MCZ
-    mcz_gate = mcz_circ(qc = QuantumCircuit(4,name="mcz")).to_instruction() 
-    qc.append(mcz_gate,[i for i in range(4)])
+   # Para agrupar as portas H MCX H em uma MCZ
+   mcz_gate = mcz_circ(qc = QuantumCircuit(4,name="mcz")).to_instruction() 
+   qc.append(mcz_gate,[i for i in range(4)])
 
-    for i, index in enumerate(winner):
-        if index == "0":
-            qc.x(i)
+   for i, index in enumerate(winner):
+      if index == "0":
+         qc.x(i)
 \end{lstlisting} 
 {\small Fonte: do autor} 
 \label{cod:oraculo} 
@@ -163,14 +163,14 @@ O módulo \verb|mcz_circ| apenas é usado para agrupar o conjunto de portas $H~M
         \centering
         \includegraphics[width=\textwidth]{Imagens/oraculoContraido.png}
         \caption{Oráculo contraído.}
-        \label{subfig:oraculoContraido}
+        \label{subFig:oraculoContraido}
     \end{subfigure}
     \hspace{1cm}
     \begin{subfigure}[b]{0.25\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Imagens/oraculoExpandido.png}
         \caption{Oráculo expandido.}
-        \label{subfig:oraculoExpandido}
+        \label{subFig:oraculoExpandido}
     \end{subfigure}
 
     \vspace{0.3em}
@@ -178,9 +178,9 @@ O módulo \verb|mcz_circ| apenas é usado para agrupar o conjunto de portas $H~M
 \end{figure}
 %
 \subsection{Difus\~{a}o}
-\label{subSec: difusaoTeo}
+\label{subSec:difusaoTeo}
 
-A etapa seguinte é a de amplificação do estado buscado, aplicando uma segunda reflexão $U_s$ (Equaç\~{a}o~\ref{eq:Us}) na resultante da etapa anterior. Conforme demonstrado na Seção~\ref{subsec:difusaoAlg}, Capítulo~\nameref{chap:ferramentas}, a operação que se deseja realizar é dada pela Equação~\ref{eq:aplicacaoDifusao}. Essa operação aplica uma fase negativa a todos os estados ortonormais a $\ket{0}$, \emph{i. e.}, a expansão da Equação~\ref{eq:aplicacaoDifusao} para quatro qubits resulta em:
+A etapa seguinte é a de amplificação do estado buscado, aplicando uma segunda reflexão $U_s$ (Equaç\~{a}o~\ref{eq:Us}) na resultante da etapa anterior. Conforme demonstrado na Seção~\ref{subSec:difusaoAlg}, Capítulo~\nameref{chap:ferramentas}, a operação que se deseja realizar é dada pela Equação~\ref{eq:aplicacaoDifusao}. Essa operação aplica uma fase negativa a todos os estados ortonormais a $\ket{0}$, \emph{i. e.}, a expansão da Equação~\ref{eq:aplicacaoDifusao} para quatro qubits resulta em:
 
 \begin{equation}
 U_0~\ket{s} = \ket{0000} - \ket{0001} - \ket{0010} - \ket{0011} - \cdots - \ket{1111} 
@@ -208,24 +208,25 @@ Para colocar isso em termos de portas lógicas, basta utilizar o conjunto de por
 \caption{Módulo Operador de Difusão} 
 \begin{lstlisting}{python}
 def difusor_Us(qc, qubits):
-    for i in qubits:
-        qc.h(i)
-        qc.x(i)
+   for qubit in qubits:
+      qc.h(qubit)
+      qc.x(qubit)
 
-    # Para agrupar as portas H MCX H em uma MCZ
-    mcz_gate = mcz_circ(qc = QuantumCircuit(4,name="mcz")).to_instruction() 
-    qc.append(mcz_gate,[i for i in range(4)])
+   # Para agrupar as portas H MCX H em uma MCZ
+   mcz_gate = mcz_circ(qc = QuantumCircuit(4,name="mcz"))
+                      .to_instruction() 
+   qc.append(mcz_gate,[i for i in range(4)])
 
-    for i in qubits:
-        qc.x(i)
-        qc.h(i)
-    return qc
+   for qubit in qubits:
+      qc.x(qubit)
+      qc.h(qubit)
+   return qc
 \end{lstlisting} 
 {\small Fonte: do autor} 
 \label{cod:difusao} 
 \end{figure}
 
-A idealização virtual desse trecho pode ser observada na Figura~\ref{fig:difusaoCompleto}. Nela, é possível fazer a equivalência entre $U_0$ (Equação~\ref{gate: difusor}) e a Figura~\ref{subfig:Uo} e entre $U_s$ (Equação~\ref{gate: operadorDifusaoCompleto}) e a Figura~\ref{subfig:Us}.
+A idealização virtual desse trecho pode ser observada na Figura~\ref{fig:difusaoCompleto}. Nela, é possível fazer a equivalência entre $U_0$ (Equação~\ref{gate: difusor}) e a Figura~\ref{subFig:Uo} e entre $U_s$ (Equação~\ref{gate: operadorDifusaoCompleto}) e a Figura~\ref{subFig:Us}.
 %
 \begin{figure}[ht!]
     \centering
@@ -237,14 +238,14 @@ A idealização virtual desse trecho pode ser observada na Figura~\ref{fig:difus
         \centering
         \includegraphics[width=\linewidth]{Imagens/circuitoDifusor.png}
         \caption{Circuito de $U_0$}
-        \label{subfig:Uo}
+        \label{subFig:Uo}
     \end{subfigure}
     \hspace{1cm}
     \begin{subfigure}[b]{0.35\textwidth}
         \centering
         \includegraphics[width=\linewidth]{Imagens/circuitoDifusorCompleto.png}
         \caption{Circuito de $U_s$}
-        \label{subfig:Us}
+        \label{subFig:Us}
     \end{subfigure}
     
     \vspace{0.3em}
@@ -253,7 +254,7 @@ A idealização virtual desse trecho pode ser observada na Figura~\ref{fig:difus
 
 \subsection{Fator \emph{k}}
 
-Para que a Equação~\ref{eq:psi k} seja de fato satisfeita, deve-se determinar o fator de otimização, \emph{i. e.}, a quantidade de vezes que o \nameref{subsec:oraculoAlg} e o \nameref{subsec:difusaoAlg} devem ser repetidos. O valor de $k$ pode ser obtido com a utilização da Equação~\ref{eq:k value}, em que tem-se $N=16$ e $m=1$.
+Para que a Equação~\ref{eq:psi k} seja de fato satisfeita, deve-se determinar o fator de otimização, \emph{i. e.}, a quantidade de vezes que o \nameref{subSec:oraculoAlg} e o \nameref{subSec:difusaoAlg} devem ser repetidos. O valor de $k$ pode ser obtido com a utilização da Equação~\ref{eq:k value}, em que tem-se $N=16$ e $m=1$.
 %
 \begin{align*}
     k =&~ \frac{\pi}{4}\sqrt{\frac{N}{m}}\\

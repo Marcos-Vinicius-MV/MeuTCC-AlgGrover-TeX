@@ -1,86 +1,102 @@
 \chapter{Resultados e Análise}
 \label{chap:resultados}
 
-Este capítulo apresentará os resultados obtidos com a execução do Algoritmo de Grover em diferentes contextos computacionais: simulação ideal, simulação com ruído e execução real em hardware quântico. Os resultados são apresentados na forma de gráficos de distribuição de probabilidades dos estados finais, permitindo comparações qualitativas e quantitativas entre os cenários.
+Neste capítulo, são apresentados os resultados obtidos a partir da implementação do Algoritmo de Grover em diferentes ambientes de execução, com e sem ruído, e com aplicação de técnicas de mitigação. Os testes foram realizados em três cenários distintos: simulação ideal via \texttt{Statevector}, simulação com ruído via \texttt{AerSimulator}, e execução real em QPUs da IBM (\texttt{ibm\_brisbane} e \texttt{ibm\_torino}).
+
+Para referência, todas as execuções (simulações e experimentos) utilizaram a mesma configuração lógica do circuito: circuito com $4$ qubits, aplicação de $k = 3$ iterações do operador de Grover (ver Figura~\ref{fig:circuitoCompleto}) e oráculo que marca o estado alvo $\omega = \ket{1111}$. A implementação do Oráculo está descrita na Seção~\ref{subSec:oraculoTeo}. Na simulação ideal não há mapeamento lógico → físico; esse mapeamento só é relevante para as execuções em \textit{hardware} real e é discutido na Seção~\ref{subSec:execucaoEstimate}. ***ADICIONAR ESSA DISCUSSAO SOBRE O MAPEAMENTO LÓGICO → FÍSICO
 
 \section{Resultado Ideal (Teórico)}
-\label{sec: resultIdeal}
+\label{sec:resultIdeal}
 
-Nesta seção, são apresentados os resultados obtidos a partir da simulação teórica ideal do circuito do Algoritmo de Grover, tal qual exemplificado na Figura~\ref{cod:simulacaoIdeol} da Seção~\ref{subSec: simulacaoIdeal}. Esta simulação permite visualizar a distribuição de probabilidades do estado final de maneira exata e sem influência de ruídos externos, funcionando como uma referência teórica para as demais simulações.
+Nesta seção, são apresentados os resultados obtidos a partir da simulação teórica ideal do circuito do Algoritmo de Grover, como exemplificado na Figura~\ref{cod:simulacaoIdeal} da Seção~\ref{subSec:simulacaoIdeal}. Esta simulação permite visualizar a distribuição de probabilidades do estado final de maneira exata e sem influência de ruídos externos, servindo de referência teórica para as demais simulações.
 
 A Figura~\ref{fig:resultIdeal} mostra o histograma gerado após a aplicação do algoritmo, considerando um circuito com $4$ qubits e o estado marcado $\omega = \ket{1111}$. Observa-se que o algoritmo amplifica significativamente a probabilidade de ocorrência do estado marcado, como era esperado teoricamente.
 
 \begin{figure}[ht!]
     \centering
     \captionsetup{justification=centering}
-    \caption{ Distribuição Ideal de Probabilidades (Simulação via \texttt{Statevector}).}
+    \caption{ Distribuição ideal de probabilidades (simulação via \texttt{Statevector}).}
     \label{fig:resultIdeal}
     \includegraphics[width=.5\linewidth]{Imagens/resultIdeal.png}    
     
     {\small Fonte: do autor} 
 \end{figure}
 
-Com o valor ideal de iterações $k=3$ (resultado~\ref{eq:k = 3}), a probabilidade de medir o estado marcado $\ket{1111}$ foi de $96,1\%$, enquanto os demais estados apresentam probabilidades próximas de zero. Este comportamento é compatível com a expectativa teórica do algoritmo de Grover, conforme discutido nas seções anteriores e demonstrado também no Apêndice~\ref{ap:apendiceA}.
+Com o valor ideal de iterações $k=3$ (resultado~\ref{eq:k = 3}), a probabilidade de medir o estado marcado $\ket{1111}$ foi de $96,1\%$, enquanto os demais estados apresentam probabilidades próximas de zero. Este comportamento é compatível com a expectativa teórica do algoritmo de Grover, conforme discutido nas seções anteriores e demonstrado também no Apêndice~\ref{ap:apendiceA}. Este resultado está em conformidade com as previsões teóricas do algoritmo, conforme também observado por Jesus \emph{et. al.} (\citeyear{jesus2021_computacao_quantica}), que demonstraram a eficácia do \emph{Qiskit} para simulações educacionais e teóricas.
 
 A distribuição obtida reflete, portanto, a eficiência máxima do algoritmo quando executado em condições ideais. Esta simulação serve como base de comparação para as análises subsequentes, em que serão incluídos fatores realistas como ruído, erro de leitura e imperfeições físicas presentes nos dispositivos quânticos atuais.
 
 \section{Resultado com Ruído (\texttt{AerSimulator})}
-\label{sec: resultRuido}
+\label{sec:resultRuido}
 
 A simulação ideal apresentada na seção anterior assume um sistema quântico livre de ruídos. No entanto, implementações reais são afetadas por diversos tipos de erros, como decoerência, erro de porta, erro de leitura e ruído térmico. Para aproximar a execução do algoritmo à realidade dos dispositivos quânticos atuais, é necessário considerar esses fatores na simulação.
 
-Esta seção tem por premissa a apresentação dos resultados da simulação feita usando dados de ruídos de dois \textit{backends} diferentes, já mencionados no Quadro~\ref{tab: backends}. Os modelos de ruídos são fornecidos pela classe \texttt{AerSimulator}, e podem ser utilizados como exemplificado na Figura~\ref{cod:simulacaoRuido} da Seção~\ref{subSec: simulacaoRuido}. Este modelo inclui características específicas e atuais do dispositivo real, como fidelidade de portas, taxas de erro de leitura e tempos de decoerência dos qubits, e por isso se faz uma ferramenta valiosa.
+Esta seção tem por premissa a apresentação dos resultados da simulação feita usando dados de ruídos de dois \textit{backends} diferentes, já mencionados no Quadro~\ref{tab: backends}. Os modelos de ruídos são fornecidos pela classe \texttt{AerSimulator}, e podem ser utilizados como exemplificado na Figura~\ref{cod:simulacaoRuido} da Seção~\ref{subSec:simulacaoRuido}. Este modelo inclui características específicas e atuais do dispositivo real, como fidelidade de portas, taxas de erro de leitura e tempos de decoerência dos qubits, e por isso se faz uma ferramenta valiosa.
+
+% ADICIONADO: sobre manutenção da configuração lógica e AerSimulator
+Nesta etapa também mantivemos a configuração lógica do circuito (4 qubits e $k = 3$, ver resultado~\ref{eq:k = 3}) e o mesmo oráculo referido na Seção~\ref{subSec:oraculoTeo}. O \texttt{AerSimulator} utiliza os parâmetros de calibração dos \textit{backends} (como descrito na Seção~\ref{subSec:simuladores}) para construir um modelo de ruído que aproxima o comportamento do dispositivo real na data de captura desses dados.
 
 A Figura~\ref{fig:resultRuido} mostra o histograma da probabilidade final, em termos de porcentagem, de cada estado.
 
 \begin{figure}[ht!]
     \centering
     \captionsetup{justification=centering}
-    \caption{Distribuição de Probabilidades (Simulação via \texttt{AerSimulator}).}
+    \caption{Distribuição de probabilidades (simulação via \texttt{AerSimulator}).}
     \label{fig:resultRuido}
     \includegraphics[width=.5\linewidth]{Imagens/resultRuido.png}    
     
     {\small Fonte: do autor} 
 \end{figure}
 
-Apesar da presença de ruído, observa-se que o estado marcado $\ket{1111}$ ainda possui a maior probabilidade entre os estados possíveis para ambos os modelos de ruído utilizados, com $46\%$ e $59\%$ para \textit{ibm\_brisbane} e \textit{ibm\_torino}, respectivamente. No entanto, pode-se notar facilmente que a presença do ruído, mesmo em ambiente simulado, já fornece um resultado bastante distorcido com relação à expectativa teórica (ou ideal), na qual a probabilidade para o estado marcado era superior a $96\%$. Ademais, os outros estados apresentam valores não desprezíveis, evidenciando a dispersão causada pelos erros quânticos.
+Apesar da presença de ruído, observa-se que o estado marcado $\ket{1111}$ ainda possui a maior probabilidade entre os estados possíveis para ambos os modelos de ruído utilizados, com $46\%$ e $59\%$ para \texttt{ibm\_brisbane} e \texttt{ibm\_torino}, respectivamente. No entanto, pode-se notar facilmente que a presença do ruído, mesmo em ambiente simulado, já fornece um resultado bastante distorcido com relação à expectativa teórica (ou ideal), na qual a probabilidade para o estado marcado era superior a $96\%$.
 
-\section{Resultado Real em \textit{Hardware} Quântico (\texttt{Sampler})}
-\label{sec: resultReal}
+Ademais, os outros estados apresentam valores não desprezíveis, evidenciando a dispersão causada pelos erros quânticos. Todo esse comportamento é consistente com os achados de \cite{TCC_2024}, que, mesmo usando outras ferramentas de simulação, relataram queda de desempenho em simulações com ruído. Essa é uma observação importante, pois garante resultados obtidos sejam não enviesados. 
 
-Após a validação teórica e a simulação com ruído, o Algoritmo de Grover foi executado em dois computadores quânticos reais da \textit{IBM Quantum}: \textit{ibm\_brisbane} e \textit{ibm\_torino}, introduzidos na Seção~\ref{subSec: computadores}. A escolha de dois dispositivos teve como objetivo comparar o desempenho do mesmo circuito em arquiteturas físicas distintas, permitindo observar variações de fidelidade e impacto de parâmetros específicos de cada backend.
+Essa dispersão mostra que, mesmo em simulações, o ruído tem um impacto significativo na performance do algoritmo, reforçando a necessidade de técnicas de supressão e de mitigação de erros para melhorar a fidelidade dos resultados nos ambientes de execução real.
+
+\section{Resultado Real em \textit{Hardware} Quânticos}
+\label{sec:resultReal}
+
+Após a validação teórica e a simulação com ruído, o Algoritmo de Grover foi executado em dois computadores quânticos reais da \textit{IBM Quantum}: \texttt{ibm\_brisbane} e \texttt{ibm\_torino}, introduzidos na Seção~\ref{subSec:computadores}, utilizando duas classes com propostas distintas: \texttt{Sampler} e \texttt{Estimate}. A escolha de dois dispositivos teve como objetivo comparar o desempenho do mesmo circuito em arquiteturas físicas distintas, permitindo observar variações de fidelidade de portas e impacto de parâmetros específicos de cada \textit{backend}. A escolha das duas classes, por sua vez, visa explorar diferentes abordagens de execução e análise dos resultados, conforme detalhado nas Seções~\ref{subSec:resultSampler} e~\ref{subSec:resultEstimate}.
+
+Para as execuções em \textit{hardware} real foi necessário transpilar o circuito para o mapa físico do dispositivo, cujo mapeamento específico é discutido na Seção~\ref{subSec:execucaoEstimate}, onde sua importância para a construção dos observáveis é evidenciada.
+
+\subsection{Via \texttt{Sampler}}
+\label{subSec:resultSampler}
+
+A classe \texttt{Sampler} é utilizada para executar circuitos quânticos em dispositivos reais, retornando a distribuição de probabilidades dos estados medidos. Entretanto ela possui uma limitação importante: permite apenas a aplicação das técnicas de supressão de erros \textit{Dynamical Decoupling} e \textit{Pauli Twirling} (Seção~\ref{subSec:supressao}).
 
 Para cada execução, foram configurados $20000$ \textit{shots}, e algumas condições específicas, conforme descritas abaixo:
 
 \begin{enumerate}
     \item Sem nenhum método de supressão.
-    \item \textit{Dynamical Decoupling} habilitado e \textit{Pauli Twirling} desabilitado.
-    \item \textit{Dynamical Decoupling} desabilitado e \textit{Pauli Twirling} habilitado.
+    \item \nameref{subSubSec:DD} habilitado e \nameref{subSubSec:twirling} desabilitado.
+    \item \nameref{subSubSec:DD} desabilitado e \nameref{subSubSec:twirling} habilitado.
     \item Ambos habilitados.
 \end{enumerate}
 
 Esse mesmo padrão foi aplicado com dois níveis diferentes de otimização ($2$ e $3$). Todas essas diferentes preparações foram com o intuito de estudo e avaliação dos efeitos de cada método, inclusive quando aplicados simultaneamente.
 
-A apresentação dos resultados é feita baseada nessas configurações, em que pode-se analisar em cada gráfico as diferenças causadas pelos métodos de supressão para um mesmo nível de otimização. Dito isso, a Figura~\ref{fig:resultBrisbane} mostra as quatro configurações de supressão aplicadas aos níveis de otimização $2$ e $3$ (Figuras~\ref{subfig:resultBrisbane_2} e~\ref{subfig:resultBrisbane_3}), enquanto a Figura~\ref{fig:resultTorino} replica as mesmas quatro configurações, também com os dois níveis de otimização aplicados a cada histograma (Figuras~\ref{subfig:resultTorino_2} e~\ref{subfig:resultTorino_3}). 
+A apresentação dos resultados é feita baseada nessas configurações, em que pode-se analisar em cada gráfico as diferenças causadas pelos métodos de supressão para um mesmo nível de otimização. Dito isso, a Figura~\ref{fig:resultBrisbane} mostra as quatro configurações de supressão aplicadas aos níveis de otimização $2$ e $3$ (Figuras~\ref{subFig:resultBrisbane_2} e~\ref{subFig:resultBrisbane_3}, respectivamente), enquanto a Figura~\ref{fig:resultTorino} replica as mesmas quatro configurações, também com os dois níveis de otimização aplicados a cada histograma (Figuras~\ref{subFig:resultTorino_2} e~\ref{subFig:resultTorino_3}). 
 
 \begin{figure}[ht!]
     \centering
     \captionsetup{justification=centering}
-    \caption{Resultados de \textit{ibm\_brisbane}.}
+    \caption{Resultados de \texttt{ibm\_brisbane}.}
     \label{fig:resultBrisbane}
 
     \begin{subfigure}[b]{.46\textwidth}
         \centering
-        \caption{Histograma de \textit{ibm\_brisbane} com $optim\_lvl = 2$}
         \includegraphics[width=\linewidth]{Imagens/resultBrisbane_2.png}
-        \label{subfig:resultBrisbane_2}
+        \caption{Histograma de \texttt{ibm\_brisbane} com $optim\_lvl = 2$}
+        \label{subFig:resultBrisbane_2}
     \end{subfigure}
     \hspace{1cm}
     \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \caption{Histograma de \textit{ibm\_brisbane} com $optim\_lvl = 3$}
         \includegraphics[width=\linewidth]{Imagens/resultBrisbane_3.png}
-        \label{subfig:resultBrisbane_3}
+        \caption{Histograma de \texttt{ibm\_brisbane} com $optim\_lvl = 3$}
+        \label{subFig:resultBrisbane_3}
     \end{subfigure}
     
     \vspace{0.3em}
@@ -90,23 +106,164 @@ A apresentação dos resultados é feita baseada nessas configurações, em que 
 \begin{figure}[ht!]
     \centering
     \captionsetup{justification=centering}
-    \caption{Resultados de \textit{ibm\_torino}}
+    \caption{Resultados de \texttt{ibm\_torino}}
     \label{fig:resultTorino}
 
     \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \caption{Histograma de \textit{ibm\_torino} com $optim\_lvl = 2$}
         \includegraphics[width=\linewidth]{Imagens/resultTorino_2.png}
-        \label{subfig:resultTorino_2}
+        \caption{Histograma de \texttt{ibm\_torino} com $optim\_lvl = 2$}
+        \label{subFig:resultTorino_2}
     \end{subfigure}
     \hspace{1cm}
     \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \caption{Histograma de \textit{ibm\_torino} com $optim\_lvl = 3$}
         \includegraphics[width=\linewidth]{Imagens/resultTorino_3.png}
-        \label{subfig:resultTorino_3}
+        \caption{Histograma de \texttt{ibm\_torino} com $optim\_lvl = 3$}
+        \label{subFig:resultTorino_3}
     \end{subfigure}
     
     \vspace{0.3em}
     {\small Fonte: do autor} 
 \end{figure}
+
+Analisando os resultados obtidos nas execuções via \texttt{Sampler}, é possível observar padrões interessantes no comportamento dos métodos de supressão de ruído em ambos os computadores quânticos. Para facilitar a análise, vamos examinar os aspectos principais:
+
+Na comparação entre os níveis de otimização $2$ e $3$, observa-se pouca variação nos resultados para ambos os dispositivos, com a maior diferença sendo o resultado "Sem supressão" da Figura~\ref{fig:resultBrisbane}, onde pode-se notar em \ref{subFig:resultBrisbane_2} ligeiramente maior que em \ref{subFig:resultBrisbane_3}. Esta diferença, aparentemente contra-intuitiva já que o nível $3$ deveria teoricamente produzir circuitos mais eficientes, pode ser explicada pelo comportamento específico das otimizações em circuitos estruturados como o Algoritmo de Grover: enquanto o nível $2$ mantém mais fielmente a estrutura original do circuito (preservando a sequência de operadores de difusão e reflexão), o nível $3$ pode tentar consolidar operações através de síntese unitária mais agressiva, potencialmente introduzindo sequências de portas mais complexas que, embora teoricamente equivalentes, podem ser mais susceptíveis a erros quando executadas no \emph{hardware} real. Isso é particularmente relevante no \texttt{ibm\_brisbane}, onde a maior conectividade entre \emph{qubits} pode levar o otimizador de nível $3$ a escolher decomposições que, embora mais compactas, acabam sendo mais sensíveis ao ruído do dispositivo.
+
+Esse comportamento foi também observado por Wu \emph{et al.} (\citeyear{Wu2023}), que destacam que níveis mais agressivos de otimização podem reduzir a contagem de portas, mas introduzem sequências mais sensíveis ao ruído, o que compromete a fidelidade do algoritmo em dispositivos NISQ.
+
+\begin{itemize}
+    \item \textbf{Dynamical Decoupling (DD):} Quando aplicado isoladamente, o DD mostrou eficácia moderada em ambos os dispositivos, com melhor desempenho absoluto no \texttt{ibm\_torino}, contudo, ao analisar a Figura~\ref{fig:resultBrisbane}, nota-se um desempenho muito melhor em relação às demais configurações. Isso pode ser explicado pela natureza do DD em cancelar interações indesejadas entre \emph{qubits} ociosos através de pulsos simétricos, como descrito na Seção~\ref{subSubSec:DD}. O melhor desempenho no \texttt{ibm\_torino} sugere que este dispositivo pode ter maior susceptibilidade a erros de decoerência durante períodos de ociosidade dos \emph{qubits}.
+    
+    \item \textbf{Pauli Twirling:} A aplicação isolada do Pauli Twirling apresentou resultados bastante diferentes entre os dois computadores: enquanto no \texttt{ibm\_brisbane} o resultado chegou a ser até pior do que o "Sem supressão" (Figura~\ref{subFig:resultBrisbane_2}), no \texttt{ibm\_torino} o resultado de Pauli Twirling retornou a maior probabilidade para o estado marcado. Chen \emph{et al.} (\citeyear{chen2025disambiguatingpaulinoisequantum}) destacam que limitações fundamentais na caracterização do ruído impedem que o Pauli Twirling produza resultados uniformes entre diferentes QPUs, o que explica a discrepância observada entre \texttt{ibm\_brisbane} e \texttt{ibm\_torino}.
+    
+    \item \textbf{Combinação DD + Twirling:} A aplicação simultânea dos dois métodos produziu bons resultados em ambos os dispositivos, mas ainda permaneceu inferior a: apenas DD no \texttt{ibm\_bris- bane} (Figura~\ref{fig:resultBrisbane}); e a Twirling no \texttt{ibm\_torino} (Figura~\ref{fig:resultTorino}). Resultados semelhantes foram observados por Safi \emph{et al.} (\citeyear{Safi2025_qsw_crosstalk_mitigation}), que demonstraram que a aplicação conjunta de DD e Twirling pode ser limitada por restrições de temporização e agendamento de portas, especialmente em dispositivos com maior conectividade. Evert \emph{et al.} (\citeyear{evert2025syncopated}) também destacam que a sobreposição de técnicas de mitigação pode gerar conflitos de agendamento ou reduzir a eficácia individual de cada método, o que ajuda a explicar os resultados observados neste trabalho.
+\end{itemize}
+
+O \texttt{ibm\_torino} apresentou (Figura~\ref{fig:resultTorino}), em geral, melhor desempenho que o \texttt{ibm\_brisbane} (Figura~\ref{fig:resultBrisbane}) em todas as configurações testadas. Essa diferença pode ser atribuída a características específicas de cada dispositivo. Embora o \texttt{ibm\_torino} possua mais \emph{qubits}, sua arquitetura física e perfil de ruído podem favorecer circuitos como o Algoritmo de Grover. Segundo a \emph{IBM Quantum Documentation} (\citeyear{ibm_qpu_info}), cada QPU possui parâmetros distintos de fidelidade, tempo de coerência e taxas de erro por porta, que variam não apenas entre dispositivos, mas também ao longo do tempo.
+Dados públicos da IBM indicam que o \texttt{ibm\_torino} frequentemente apresenta menores taxas de erro em operações de dois \emph{qubits} ($CX$) e maior estabilidade nas medições, o que pode explicar sua melhor resposta às técnicas de supressão aplicadas neste trabalho. Além disso, a profundidade final dos circuitos transpilados para o \texttt{ibm\_torino} foi consistentemente menor, o que contribui para maior fidelidade na execução. Essa diferença pode estar relacionada à forma como o \emph{transpiler} do \emph{Qiskit} otimiza circuitos para cada \emph{backend}, levando em conta o mapa de acoplamento e os tempos de gate específicos de cada QPU
+
+Esses resultados demonstram a importância da escolha adequada tanto do dispositivo quanto das técnicas de supressão de ruído, e como sua eficácia pode variar significativamente dependendo das características específicas do \emph{hardware} quântico utilizado.
+
+\subsection{Via \texttt{Estimate}}
+\label{subSec:resultEstimate}
+
+Após a execução usando a classe \texttt{Sampler}, o Algoritmo de Grover foi novamente executado nos mesmos computadores quânticos reais da \textit{IBM Quantum}, porém utilizando a classe \texttt{Estimate}. Essa classe, diferentemente da \texttt{Sampler}, permite a aplicação das técnicas de mitigação de erros, sendo essa a principal razão para sua utilização. Contudo, enquanto a classe \texttt{Sampler} retorna as probabilidades de cada estado, a classe \texttt{Estimate} retorna os valores esperados, o que torna a análise dos resultados um pouco diferente: em vez de observar a probabilidade de cada estado, deve-se analisar o valor esperado associado ao estado marcado \( \ket{1111} \), para cada configuração de mitigação de erros.
+
+% ADICIONADO: referência ao valor esperado do projetor
+Quando o observável estimado é o projetor sobre o estado marcado \(P_{\omega}=\ket{\omega}\bra{\omega}\) com \(\omega=1111\), o valor esperado coincide com a probabilidade de obter \(\omega\) na medição (ver demonstração no Apêndice~\ref{ap:apendiceB}).
+% Se o \texttt{Estimate} foi configurado para estimar outro observável (por exemplo, combinação de operadores de Pauli com autovalores \(\pm 1\)), é necessário aplicar a transformação adequada para converter o valor esperado na probabilidade de sucesso (por exemplo, mapear um valor em \([-1,1]\) para \([0,1]\) por uma transformação afim). Indicar qual observável foi usado é essencial para interpretar corretamente as barras dos gráficos.
+
+Para essa análise, foram configurados $10000$ \textit{shots}, o nível de otimização foi fixado em \( 3 \), e as condições específicas de mitigação de erros foram as seguintes:
+
+\begin{enumerate}
+    \item Sem nenhum método de mitigação.
+    \item Apenas \nameref{subSubSec:DD} habilitado.
+    \item Apenas \nameref{subSubSec:trex}  habilitado.
+    \item Apenas \nameref{subSubSec:twirling}  habilitado.
+    \item Apenas \nameref{subSubSec:pec}  habilitado.
+    \item \nameref{subSubSec:zne} com \nameref{subSubSec:pea} habilitados.
+    \item  \nameref{subSubSec:trex}, \nameref{subSubSec:twirling} e \nameref{subSubSec:zne} habilitados.
+\end{enumerate}
+
+A Figura~\ref{fig:resultEstimate} apresenta os resultados obtidos para cada uma dessas configurações, em ambos os computadores quânticos. Cada barra no gráfico representa o valor esperado do estado marcado \( \ket{1111} \) sob as diferentes técnicas de mitigação de erros aplicadas.
+
+\begin{figure}[ht!]
+    \centering
+    \captionsetup{justification=centering}
+    \caption{Probabilidades do estado $\ket{1111}$ via \texttt{Estimate}.}
+    \label{fig:resultEstimate}
+
+    \begin{subfigure}[b]{.46\textwidth}
+        \centering
+        % \includegraphics[width=\linewidth]{Imagens/resultEstimate_Brisbane.png}
+        \caption{Resultados de \texttt{ibm\_brisbane}}
+        \label{subFig:resultEstimate_Brisbane}
+    \end{subfigure}
+    \hspace{1cm}
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Imagens/resultEstimate_Torino.png}
+        \caption{Resultados de \texttt{ibm\_torino}}
+        \label{subFig:resultEstimate_Torino}
+    \end{subfigure}
+    
+    \vspace{0.3em}
+    {\small Fonte: do autor}
+\end{figure}
+
+Os resultados obtidos via \texttt{Estimate} fornecem uma perspectiva complementar sobre a eficácia das técnicas de mitigação de erros. Analisando os dados apresentados na Figura~\ref{fig:resultEstimate}, podemos observar:
+
+\begin{itemize}
+    \item \textbf{Dynamical Decoupling:} Quando aplicado isoladamente, o DD mostrou um retorno inferior em relação ao caso base sem mitigação, atingindo $38,48\%$. Esse resultado está alinhado com a documentação da IBM Quantum \cite{IBM_DD}, que destaca que o uso de \emph{Dynamical Decoupling} pode, em certos casos, aumentar a duração do circuito e introduzir mais erros do que os que busca suprimir, especialmente quando aplicado isoladamente em circuitos sensíveis à coerência temporal. Além disso, como explicado na Seção~\ref{subSubSec:DD}, o DD é mais eficaz na supressão de erros de decoerência durante períodos de ociosidade dos \emph{qubits}, e sua aplicação em circuitos com alta atividade pode não trazer benefícios significativos.
+    
+    \item \textbf{TREX:} A técnica de extinção de erro de leitura giratória apresentou resultados significativamente melhores que o caso base, atingindo $51,47\%$ em Figura~\ref{subFig:resultEstimate_Torino}. Esse desempenho está alinhado com os achados de Yang et al. (2025), que demonstraram que métodos de mitigação de erro de leitura como o TREX são especialmente eficazes em algoritmos com saídas esparsas, como o de Grover. Segundo os autores, “nosso \emph{framework} baseado em TREX mostrou melhora substancial na probabilidade de sucesso de algoritmos como a busca de Grover, alcançando até $50\%$ de acurácia em \emph{backends} ruidosos da IBM” \cite{yang2025trex}.
+    \item \textbf{Pauli Twirling:} Obtendo $46,88\%$ de probabilidade em Figura~\ref{subFig:resultEstimate_Torino}, o método apresentou melhorias significativas comparado ao sem mitigação. O resultado está próximo ao da Figura~\ref{fig:resultTorino}, com uma diferença de apenas $2,4$ pontos percentuais, mostrando consistência no dispositivo quanto à técnica empregada.
+    
+    \item \textbf{PEC:} O Cancelamento de Erro Probabilístico apresentou desempenho moderado, atingindo $49{,}55\%$ conforme mostrado na Figura~\ref{subFig:resultEstimate_Torino}. Embora tenha superado o caso base sem mitigação, o resultado ficou abaixo de outras técnicas como TREX e ZNE + PEA. Esse comportamento está de acordo com a literatura, que aponta que o PEC pode fornecer estimativas não enviesadas, mas exige um número elevado de amostras (\emph{shots}) para convergência estatística, o que pode limitar sua eficácia prática em dispositivos NISQ. Como discutido na Seção~\ref{subSubSec:pec}, o alto custo de amostragem e a sensibilidade ao ruído residual tornam o método mais adequado para cenários onde o tempo de execução e os recursos computacionais não são restritivos.
+    
+    \item \textbf{ZNE + PEA:} A combinação entre Extrapolação de Ruído Zero (ZNE) e Amplificação de Erro Probabilística (PEA) apresentou os melhores resultados entre todas as técnicas testadas, atingindo $59{,}76\%$ de probabilidade para o estado marcado, conforme Figura~\ref{subFig:resultEstimate_Torino}. Esse resultado evidencia uma forte sinergia entre as duas técnicas: enquanto o ZNE estima o valor ideal por meio da extrapolação de níveis crescentes de ruído, o PEA atua calibrando o impacto das probabilidades de erro. O ganho de aproximadamente $20\%$ em relação ao caso sem mitigação demonstra a eficácia dessa estratégia híbrida para circuitos sensíveis à coerência, como o de Grover. O resultado reforça achados recentes que indicam que a combinação de técnicas complementares pode superar abordagens isoladas, especialmente em algoritmos sensíveis à fidelidade como o de Grover.
+    
+    \item \textbf{TREX + Twirling + ZNE + DD:} A combinação múltipla dessas quatro técnicas alcançou $47{,}08\%$, conforme ilustrado em Figura~\ref{subFig:resultEstimate_Torino}. Embora o valor seja superior ao caso base, o resultado ficou aquém das expectativas para uma estratégia composta, com desempenho inferior ao das melhores técnicas aplicadas isoladamente, como ZNE + PEA e TREX, o que sugere possível sobreposição de efeitos ou aumento excessivo da profundidade do circuito. Esse comportamento reforça que a integração simultânea de técnicas deve ser cuidadosamente otimizada, considerando o equilíbrio entre mitigação efetiva e o acréscimo de complexidade e tempo de execução. Esse resultado sugere que a combinação excessiva de técnicas pode introduzir sobreposição de efeitos ou conflitos de agendamento, como apontado por Evert \emph{et al.} (\citeyear{evert2025syncopated}), que destacam que a interação entre métodos de mitigação precisa ser cuidadosamente calibrada para evitar degradação da performance. A complexidade adicional pode ter aumentado a profundidade do circuito ou interferido na coerência temporal, reduzindo a eficácia global da mitigação.
+\end{itemize}
+
+No tocante às QPUs utilizadas, \texttt{ibm\_torino} manteve seu padrão de melhor desempenho observado nas execuções via \texttt{Sampler} e \texttt{Estimator}, obtendo melhores números que \texttt{ibm\_brisbane}, pois apresentou
+
+\begin{itemize}
+    \item maior resposta às técnicas de mitigação individuais, como TREX e ZNE
+    \item menor variabilidade entre execuções, indicando maior estabilidade operacional
+    \item resultados mais próximos ao caso ideal, especialmente com técnicas combinadas como ZNE + PEA
+\end{itemize}
+
+Em síntese, os resultados obtidos via \texttt{Estimate} indicam que o conjunto de técnicas de mitigação tem potencial significativo para restaurar parte da fidelidade perdida devido ao ruído. Observa-se que o \texttt{ibm\_torino} apresentou desempenho superior em todas as configurações, corroborando os resultados da Seção~\ref{subSec:resultSampler} e reforçando a relevância da escolha adequada do dispositivo físico. As combinações ZNE + PEA e TREX mostraram-se particularmente eficazes, representando estratégias promissoras para execução de algoritmos de amplitude amplificada em processadores NISQ.
+
+\section{Comparação e Discussão}
+
+O Quadro~\ref{tab:comparacaoResultados} resume os resultados obtidos:
+
+\begin{quadro}[htb!]
+\begin{center}
+    \caption{Comparação entre diferentes cenários de execução do Algoritmo de Grover}
+    \label{tab:comparacaoResultados}
+    \begin{tabular}{|lccc|}
+        \hline
+        \textbf{Cenário} & \textbf{Prob. de Acerto}                          & \textbf{Supressão}     & \textbf{Mitigação} \\
+        \hline
+        Sim. Ideal       & $96,1\%$                                          & Não aplicável          & Não aplicável \\
+        Sim. Ruído       & $46\%$ (brisbane),$59\%$(torino)                  & Não aplicável          & Não aplicável \\
+        Exec. Real       & $\approx25\%$ (brisbane),$38$-$60\%$ (torino)     & DD, Twirling           & TREX, PEC, ZNE, PEA \\
+        \hline
+    \end{tabular}
+\end{center}
+\centering {\small Fonte: do autor} 
+\end{quadro}
+
+A análise comparativa dos resultados apresentados no Quadro~\ref{tab:comparacaoResultados} evidencia a degradação progressiva do desempenho do Algoritmo de Grover à medida que se aumenta a exposição ao ruído e às imperfeições experimentais. No cenário ideal, o circuito atingiu a probabilidade teórica esperada de aproximadamente $96\%$ para o estado marcado, confirmando a coerência entre o modelo matemático e a implementação computacional. Ao incorporar modelos realistas de ruído com o \texttt{AerSimulator}, observou-se uma redução acentuada dessa probabilidade -- cerca de $46\%$ para o modelo baseado no backend \texttt{ibm\_brisbane} e $59\%$ para o \texttt{ibm\_torino}. Essa diferença já antecipa a superioridade observada no \emph{hardware} real do \texttt{ibm\_torino}, refletindo sua menor taxa de erro de portas e estabilidade temporal mais consistente.
+
+% ###################################################################################################
+Nas execuções em \emph{hardware} real, os resultados confirmam o padrão previsto pelos simuladores ruidosos, mas com degradação adicional -- aproximadamente $25\%$ no \texttt{ibm\_brisbane} e valores variando entre $38\%$ e $60\%$ no \texttt{ibm\_torino}, dependendo da técnica de mitigação aplicada. Essa diferença é tecnicamente relevante: enquanto o \texttt{ibm\_brisbane} apresentou respostas inconsistentes mesmo após mitigação, o \texttt{ibm\_torino} manteve comportamento mais estável e previsível, reforçando sua melhor adequação a experimentos que exigem coerência temporal sustentada. Além disso, a proximidade entre os resultados mitigados do \texttt{ibm\_torino} e os simulados com ruído realista indica que os modelos de ruído utilizados pelo \texttt{AerSimulator} reproduzem, de forma qualitativa, as principais fontes de erro do dispositivo, embora ainda não capturem fenômenos correlacionados mais sutis, como \emph{crosstalk} e erros de fase acumulativos. Das e Glosh (\citeyear{das2025optimization}) destacam que a qualidade dos qubits e a eficácia dos códigos de correção de erros variam significativamente ao longo do tempo e entre dispositivos, sendo fortemente influenciadas por fatores como calibração e arquitetura física.
+
+A integração de técnicas de supressão e mitigação também revelou nuances importantes. Estratégias de supressão como \emph{Dynamical Decoupling} e \emph{Pauli Twirling}, quando aplicadas isoladamente, mostraram ganhos modestos e, em alguns casos, até degradação do desempenho, o que está em consonância com as observações anteriores na Seção~\ref{sec:resultadosEstimate}. Em contrapartida, técnicas de mitigação aplicadas após a execução -- especialmente a \emph{Zero-Noise Extrapolation} (ZNE) combinada à \emph{Probabilistic Error Amplification} (PEA) -- apresentaram os melhores resultados, atingindo até $59,76\%$ no \texttt{ibm\_torino}. Isso demonstra que abordagens híbridas, que combinam amplificação e extrapolação de ruído, podem recuperar de forma significativa a fidelidade perdida, superando até mesmo o desempenho de combinações múltiplas mais complexas como \emph{TREX + Twirling + ZNE + DD}, cuja sobreposição de efeitos reduziu o ganho esperado. O trabalho recente de Xu \emph{et al.} \citeyear{xu2025efficientmeasurementerrormitigation} demonstra que abordagens como \emph{Pauli Twirling} e \emph{Dynamical Decoupling} são eficazes na supressão de erros coerentes e de despolarização em qubits ociosos, enquanto técnicas de mitigação como \emph{ZNE} e \emph{PEC} têm se mostrado promissoras na reconstrução de resultados ideais a partir de execuções ruidosas. Dessa forma, constata-se que, embora o ruído ainda imponha limitações significativas, o uso coordenado de estratégias de supressão e mitigação é capaz de reduzir de forma mensurável o impacto dos erros quânticos e aproximar os resultados experimentais dos valores teóricos esperados.
+
+\section{Análise Qualitativa dos Métodos de Supressão e Mitigação}
+\label{sec:analiseQualitativa}
+
+A análise qualitativa dos métodos aplicados confirma que a eficácia das estratégias depende fortemente do equilíbrio entre o tipo de ruído dominante, a profundidade do circuito e a arquitetura da QPU utilizada. Entre os métodos de supressão, o \emph{Dynamical Decoupling} (DD) demonstrou comportamento ambíguo: embora capaz de reduzir a decoerência durante períodos de ociosidade, seu uso em circuitos de Grover -- caracterizados por alta densidade de operações -- tende a aumentar a duração total da execução, expondo o sistema a novos erros. Isso explica por que, nos experimentos realizados, o DD isolado apresentou desempenho inferior ao caso sem mitigação e está alinhado está alinhado com observações recentes sobre a introdução de ruído adicional por sequências DD mal ajustadas em \emph{hardware} real \cite{rahman2024learning,tong2025empirical}. O \emph{Pauli Twirling}, por outro lado, mostrou-se mais consistente, pois converte erros coerentes sistemáticos em ruídos estocásticos de tipo Pauli, mais facilmente tratáveis por técnicas como ZNE e PEC. Sua aplicação contribuiu para reduzir as flutuações de fidelidade entre execuções consecutivas, especialmente no \texttt{ibm\_torino} \cite{mitiq2025znept,ibm2025mitigation}.
+
+Em relação às técnicas de mitigação, os resultados apontam o \emph{TREX} como um dos métodos mais eficientes em termos de custo-benefício, apresentando melhora notável na correção de erros de leitura sem introduzir sobrecarga significativa de processamento. Segundo a documentação da \emph{IBM Quantum}, o TREX é especialmente eficaz na mitigação de erros de leitura por meio de modelos treinados com dados reais do backend, oferecendo bons resultados com baixo custo computacional \cite{ibm2025mitigation}. A \emph{Zero-Noise Extrapolation} (ZNE), por sua vez, confirmou sua utilidade como mecanismo de reconstrução de resultados ideais a partir de execuções com diferentes níveis de ruído artificialmente ampliados. Estudos como o de Cai \emph{et al.} \citeyear{cai2022quantum} destacam que a precisão da ZNE depende fortemente da estabilidade estatística do backend e da qualidade das amostras, sendo mais sensível em dispositivos sujeitos a flutuações de calibração. A \emph{Probabilistic Error Amplification} (PEA) mostrou-se especialmente eficaz quando combinada com ZNE, potencializando o efeito da extrapolação e permitindo correções mais robustas em regimes de ruído intermediário \cite{ibm2025mitigation}. Já a \emph{Probabilistic Error Cancellation} (PEC) manteve-se como uma técnica teoricamente precisa, capaz de fornecer estimativas não enviesadas, mas limitada em termos práticos devido ao custo exponencial em número de amostras requerido para convergência -- fator que restringe sua aplicabilidade em dispositivos NISQ com recursos limitados \cite{cai2022quantum,apxml2025znepec}.
+
+De modo geral, os resultados corroboram a interpretação de que a mitigação de erros eficaz não depende da simples acumulação de técnicas, mas sim da escolha criteriosa de combinações complementares e compatíveis com o perfil do circuito e da QPU. No contexto deste trabalho, o \texttt{ibm\_torino} beneficiou-se claramente da sinergia entre ZNE e PEA, alcançando o melhor equilíbrio entre custo computacional e fidelidade. Já combinações excessivas -- como a inclusão simultânea de \emph{DD}, \emph{Twirling}, \emph{TREX} e \emph{ZNE} -- resultaram em sobreposição de efeitos e aumento desnecessário da profundidade, reduzindo o ganho global. Assim, esta análise qualitativa reforça que, para algoritmos sensíveis à coerência como o de Grover, abordagens híbridas moderadas tendem a ser mais eficazes do que estratégias de mitigação múltiplas e complexas, especialmente quando aplicadas em arquiteturas NISQ com recursos limitados.
+
+Os métodos de supressão e mitigação de ruído desempenharam papéis complementares na melhoria da fidelidade dos resultados. Enquanto as técnicas de supressão atuaram na redução do ruído durante a execução, as técnicas de mitigação compensaram os efeitos residuais no pós-processamento. A combinação de métodos, como \textit{TREX}, \textit{ZNE} e \textit{PEC}, mostrou-se promissora, embora com custos computacionais adicionais. Para aplicações práticas, a escolha dos métodos deve considerar o equilíbrio entre custo e benefício, bem como as características específicas do dispositivo e do circuito.
+
+\section{Resumo e conclusões}
+\label{sec:conclusoes_resultados}
+
+Este capítulo apresentou e discutiu os resultados obtidos para o Algoritmo de Grover implementado em um circuito de quatro qubits, considerando três cenários distintos: simulação ideal, simulação com ruído e execução em \textit{hardware} quântico real, nos dispositivos \texttt{ibm\_brisbane} e \texttt{ibm\_torino}. No regime ideal, com três iterações ($k=3$) conforme o resultado da Equação~\ref{eq:k = 3}, observou-se a amplificação prevista do estado marcado, atingindo aproximadamente $96\%$ de probabilidade. A introdução de modelos de ruído via \texttt{AerSimulator} reduziu significativamente essa taxa de sucesso, refletindo a influência de erros de porta e decoerência. Quando executado em dispositivos reais, o desempenho sofreu nova redução, atribuída tanto à limitação intrínseca das QPUs quanto à variabilidade das calibrações diárias e à necessidade de mapeamento lógico–físico dos qubits.
+
+Os resultados confirmam três observações principais: primeiro, o comportamento ideal previsto teoricamente é reproduzido de forma precisa nas simulações sem ruído; segundo, as simulações com ruído aproximam qualitativamente o desempenho observado em \emph{hardware}, mas ainda apresentam discrepâncias numéricas devido a efeitos não capturados nos modelos e à natureza dinâmica das calibrações; e terceiro, a aplicação de técnicas (combinadas ou não) de supressão (como \textit{Dynamical Decoupling} e \textit{Pauli Twirling}) e de mitigação (como \textit{Zero-Noise Extrapolation}, \textit{Probabilistic Error Cancellation}, \textit{Probabilistic Error Amplification} e TREX) permitiu recuperar parte da fidelidade perdida, mesmo que ao custo de aumento no número de execuções e maior complexidade de pós-processamento.
+
+Em termos de aplicabilidade prática, os resultados indicam que o Algoritmo de Grover pode alcançar desempenho satisfatório em problemas de pequena escala quando executado em dispositivos NISQ, desde que sejam aplicadas estratégias adequadas de otimização e mitigação. Contudo, a presença de ruído ainda limita ganhos expressivos em circuitos maiores, evidenciando a necessidade de abordagens híbridas que integrem técnicas de calibração adaptativa, mitigação probabilística e aprendizado automático. Recomenda-se que estudos futuros explorem a variabilidade temporal das calibrações entre diferentes datas e backends, bem como análises sistemáticas de custo-benefício para combinações específicas de mitigação -- como ZNE + PEA -- e extensões para circuitos de cinco ou seis qubits.
+
+Assim, embora o Algoritmo de Grover mantenha sua eficiência teórica, sua execução prática em QPUs reais exige uma combinação criteriosa de técnicas de supressão e mitigação. Os resultados aqui obtidos reforçam achados recentes da literatura sobre tolerância ao ruído em sistemas NISQ e apontam para caminhos promissores envolvendo técnicas emergentes, como \textit{quantum switches}~\cite{Srivastava_2025} e métodos de aprendizado de máquina para correção adaptativa~\cite{simple2025_computacao_quantica}.

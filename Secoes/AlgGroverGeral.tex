@@ -36,7 +36,7 @@ Por fim, utiliza-se o Operador de Difus\~{a}o para aumentar a amplitude do estad
 
 % \subsection{Funcionamento}
 % \label{subsec:funcionamentoAlg}
-Quando trabalha-se com o Algoritmo de Grover, pode-se reduzir o problema a um espaço de duas dimensões, sendo necess\'{a}rio considerar apenas o estado buscado -- \textit{winner}, $\ket{\omega}$ --, e a superposiç\~{a}o uniforme, $\ket{s}$. Contudo, esses n\~{a}o s\~{a}o vetores perpendiculares entre si, uma vez que $\ket{\omega}$ ocorre em superposiç\~{a}o com amplitude $\frac{1}{\sqrt{N}}$. Para contornar isso, cria-se um vetor $\ket{s'}$ que \'{e} perpendicular a $\ket{\omega}$, formando assim o plano bidimensional apresentado na Figura~\ref{subfig:Plano}. Na Figura~\ref{subfig:Amplitude}, est\~{a}o ilustradas as amplitudes dos itens contidos no conjunto, evidenciando o elemento \textit{winner}.
+Quando trabalha-se com o Algoritmo de Grover, pode-se reduzir o problema a um espaço de duas dimensões, sendo necess\'{a}rio considerar apenas o estado buscado -- \textit{winner}, $\ket{\omega}$ --, e a superposiç\~{a}o uniforme, $\ket{s}$. Contudo, esses n\~{a}o s\~{a}o vetores perpendiculares entre si, uma vez que $\ket{\omega}$ ocorre em superposiç\~{a}o com amplitude $\frac{1}{\sqrt{N}}$. Para contornar isso, cria-se um vetor $\ket{s'}$ que \'{e} perpendicular a $\ket{\omega}$, formando assim o plano bidimensional apresentado na Figura~\ref{subFig:Plano}. Na Figura~\ref{subFig:Amplitude}, est\~{a}o ilustradas as amplitudes dos itens contidos no conjunto, evidenciando o elemento \textit{winner}.
 
 \begin{figure}[ht!]
     \centering
@@ -46,14 +46,14 @@ Quando trabalha-se com o Algoritmo de Grover, pode-se reduzir o problema a um es
         \centering
         \includegraphics[width=\textwidth]{Imagens/BidimensionalEspaco.png}
         \caption{Plano formado pelos vetores $\ket{\omega}$ e $\ket{s'}$.}
-        \label{subfig:Plano}
+        \label{subFig:Plano}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Imagens/AmplitudesW.png}
         \caption{Amplitude dos itens do conjunto, com $\ket{\omega}$ em destaque.}
-        \label{subfig:Amplitude}
+        \label{subFig:Amplitude}
     \end{subfigure}
 
     \vspace{0.3em}
@@ -86,7 +86,7 @@ Em termos de circuito qu\^{a}ntico, a superposiç\~{a}o explicitada pela Equaç\
     \label{eq:preparacaoInicial}
 \end{equation}
 
-O vetor $\ket{s}$ que aparece na Figura~\ref{subfig:Plano} pode ser escrito em coordenadas polares, como
+O vetor $\ket{s}$ que aparece na Figura~\ref{subFig:Plano} pode ser escrito em coordenadas polares, como
 %
 \begin{equation}
     \ket{s} = \sin{\theta}\ket{\omega} + \cos{\theta}\ket{s'},
@@ -101,7 +101,7 @@ em que
 \end{equation}
 
 \subsection{Or\'{a}culo ($U_f$)}
-\label{subsec:oraculoAlg}
+\label{subSec:oraculoAlg}
 
 Tomando a premissa de que o elemento $\omega$ procurado está em um determinado conjunto contendo $N = 2^n$ itens, ${0, 1, 2, ..., N-1}$, com $n \in \mathbb{N}$, podemos recorrer a uma função $f : {0, 1, 2, ..., N-1},\\ \to {1,-1}$ que atua na amplitude dos elementos para marcar o buscado, sendo $f$ tal que
 %
@@ -125,14 +125,14 @@ Em outras palavras, o Oráculo, denotado por \simboloinline{$U_f$}{Operador Orá
         \centering
         \includegraphics[width=\textwidth]{Imagens/rotacao.png}
         \caption{Reflexão de $\ket{s}$ sobre $\ket{s'}$ em um \^{a}ngulo $\theta$.}
-        \label{subfig:rotacao}
+        \label{subFig:rotacao}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Imagens/reflexao.png}
         \caption{Reflexão de $\pi$ rads na amplitude de $\ket{\omega}$.}
-        \label{subfig:reflexao}
+        \label{subFig:reflexao}
     \end{subfigure}
 
     \vspace{0.5em}
@@ -152,8 +152,8 @@ De modo geral, a construção dos Oráculos no Algoritmo de Grover pode ser real
     \item Por fim, aplica-se novamente a porta $X$ nos mesmos qubits que sofreram o \textit{bit-flip} na primeira etapa, revertendo as alterações realizadas inicialmente.
 \end{enumerate}
 
-\subsection{Operador de Difus\~{a}o ($U_s$)}
-\label{subsec:difusaoAlg}
+\subsection{Operador de Difus\~{a}o (\(U_s\))}
+\label{subSec:difusaoAlg}
 
 A  aplicação do Operador de Difusão, denotado por \simboloinline{$U_s$}{\textit{Operador de Difus\~{a}o}}, consiste em operações de amplificação sobre o estado $\ket{s}$, gerando uma reflexão adicional do mesmo.
 %
@@ -174,14 +174,14 @@ Essa transformação mapeia o estado de $\ket{s}$ para $(U_sU_f)\ket{s}$ e compl
         \centering
         \includegraphics[width=\textwidth]{Imagens/reflexaoEstado.png}
         \caption{Segunda reflexão de $\ket{s}$ sobre $\ket{s'}$.}
-        \label{subfig:reflexaoEstado}
+        \label{subFig:reflexaoEstado}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Imagens/reflexaoAmplitude.png}
         \caption{Segunda reflexão na amplitude de $\ket{\omega}$.}
-        \label{subfig:reflexaoAmplitude}
+        \label{subFig:reflexaoAmplitude}
     \end{subfigure}
 
     \vspace{0.5em}
@@ -199,7 +199,7 @@ Como esta é uma reflexão sobre $\ket{s}$, busca-se adicionar uma fase negativa
 
 Essa operação aplica uma fase negativa a todos os estados ortonormais a $\ket{0}$, como será demonstrado.
 
-[TALVEZ COLOCAR NUM APÊNDICE***]
+% [TALVEZ COLOCAR NUM APÊNDICE***]
 
 Aplicação do Operador $U_0$ em $\ket{s}$, com $\ket{s}$ podendo ser um conjunto arbitr\'{a}rio com $N-1$ itens:
 
@@ -214,14 +214,14 @@ Expandindo, tem-se:
 \end{equation*}
 
 \begin{equation}
-2~\ket{0} \left( \sum_{x=0}^{15} \braket{0|bin(x)}\right) = \sum_{x=0}^{15} \ket{bin(x)}
+2~\ket{0} \left( \sum_{x=0}^{N-1} \braket{0|bin(x)}\right) = \sum_{x=0}^{N-1} \ket{bin(x)}
 \label{eq:aplicacaoDifusor 2}
 \end{equation}
 %
 Como $\braket{0|bin(x)} = 1$ apenas se $x = 0$ (enquanto todos os outros termos se tornam $0$),  o único termo que sobrevive é:
 %
 \begin{equation*}
-2\ket{0}{\braket{0|bin(0)}} = 2\ket{bin(0)}
+    2\ket{0}{\braket{0|bin(0)}} = 2\ket{0}\braket{0|0} = 2\ket{0} = 2\ket{bin(0)}
 \end{equation*}
 
 Então, em síntese, tem-se:
@@ -284,7 +284,7 @@ Ou seja, existe ainda uma fase global em $U_0$, de modo que o Operador de Difus�
     \label{gate: difusor}
 \end{equation}
 
-O trecho de circuito descrito em Equação está mostrado na Figura~\ref{fig:difusor}
+O trecho de circuito descrito em Equação~\ref{gate: difusor} está mostrado na Figura~\ref{fig:difusor}
 
 \begin{figure}[!htb]
 \centering
@@ -294,7 +294,7 @@ O trecho de circuito descrito em Equação está mostrado na Figura~\ref{fig:dif
 \lstick{$q_0$}       & \gate{X} & \qw      & \ctrl{1}   & \qw       & \gate{X}  & \qw \\
 \lstick{$q_1$}       & \gate{X} & \qw      & \ctrl{2}   & \qw       & \gate{X}  & \qw \\
 \lstick{$\vdots$}    &~\vdots~  &          &            & \qw       &~\vdots~   & \qw \\
-\lstick{$q_{n-1}$}   & \gate{X} & \gate{H} & \gate{X}   & \gate{H}  & \gate{X}  & \qw \\
+\lstick{$q_{n-1}$}   & \gate{X} & \qw      & \gate{Z}   & \qw       & \gate{X}  & \qw \\
 \lstick{$c: n$}      & \cw      & \cw      & \cw        & \cw       & \cw       & \cw
 \end{quantikz}
 
@@ -319,7 +319,7 @@ Note que a fase negativa não foi acrescentada, pois não precisa ser considerad
 \lstick{$q_0$}       & \gate{H} & \gate{X} &          & \ctrl{1} &          & \gate{X} & \gate{H} & \qw \\
 \lstick{$q_1$}       & \gate{H} & \gate{X} &          & \ctrl{2} &          & \gate{X} & \gate{H} & \qw \\
 \lstick{$\vdots$}    &~\vdots~  &~\vdots~  &          &          &          & ~\vdots~ & ~\vdots~ & \qw \\
-\lstick{$q_{n-1}$}   & \gate{H} & \gate{X} & \gate{H} & \gate{X} & \gate{H} & \gate{X} & \gate{H} & \qw \\
+\lstick{$q_{n-1}$}   & \gate{H} & \gate{X} & \qw      & \gate{Z} & \qw      & \gate{X} & \gate{H} & \qw \\
 \lstick{$c: n$}      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw
 \end{quantikz}
 
@@ -330,7 +330,7 @@ Note que a fase negativa não foi acrescentada, pois não precisa ser considerad
 \subsection{Fator de Otimizac\~{a}o (k)}
 \label{subsec:otimizacao k}
 
-Afim de otimizar o resultado, a aplicação do \nameref{subsec:oraculoAlg} e do \nameref{subsec:difusaoAlg} deverão ser executados um número \simboloinline{$k$}{Fator de Otimização do Algoritmo de Grover} de vezes para que o resultado obtido seja o mais próximo possível (com maiores amplitudes e probabilidades) do estado esperado $\ket{\omega}$, e pode ser expresso por
+Afim de otimizar o resultado, a aplicação do \nameref{subSec:oraculoAlg} e do \nameref{subSec:difusaoAlg} deverão ser executados um número \simboloinline{$k$}{Fator de Otimização do Algoritmo de Grover} de vezes para que o resultado obtido seja o mais próximo possível (com maiores amplitudes e probabilidades) do estado esperado $\ket{\omega}$, e pode ser expresso por
 %
 \begin{equation}
     \label{eq:psi k}

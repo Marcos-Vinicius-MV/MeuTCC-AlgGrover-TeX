@@ -12,6 +12,8 @@
 *.blg
 *.lgg
 *.los
+*.synctex
+*.synctex(busy)
 
 # Diretórios temporários
 _build/

@@ -1,23 +1,51 @@
-\apendice{Reconstrução de Probabilidades Multi-Qubit a partir do \texttt{Estimator}}
+\apendice{Construção de Observáveis no \texttt{Qiskit}}
 \label{ap:apendiceB}
 
-Ao utilizar o \texttt{Estimator} do \textit{Qiskit}, o resultado retornado consiste nos valores esperados dos operadores de medição, tipicamente expressos em termos de combinações de observáveis do tipo $Z_i$, onde $Z$ é o operador de Pauli-$Z$. 
+Em mecânica quântica, um \textit{observável} é representado por um operador Hermitiano \(\hat{O}\), cujo valor esperado fornece a média dos resultados possíveis de uma medição sobre um estado quântico.
 
-Para um sistema de $n$ \textit{qubits}, a base computacional $\{\ket{0}, \ket{1}\}$ é associada aos autovalores $+1$ e $-1$ do operador $Z$, respectivamente. Assim, a probabilidade de cada estado base pode ser reconstruída a partir das médias dos produtos de operadores $Z$.
+No contexto de computadores quânticos discretos (circuitos e \emph{qubits}), é mais conveniente trabalhar na base computacional formada pelos vetores \(\{\ket{x}\}\), com \(x\in\{0,\dots,2^n-1\}\). Nessa base, observáveis são frequentemente construídos a partir de combinações lineares de produtos de operadores de Pauli (\(I,X,Y,Z\)), formando a chamada base de Pauli. Assim, qualquer operador Hermitiano pode ser expresso como
 
-Para o caso de $n=4$, é necessário obter:
-\begin{itemize}
-    \item As expectativas de 1 ponto: $\langle Z_0 \rangle, ~\langle Z_1 \rangle,~ \langle Z_2 \rangle,~ \langle Z_3 \rangle$.
-    \item As expectativas de 2 pontos: $\langle Z_0 Z_1 \rangle,~ \langle Z_0 Z_2 \rangle,~ \dots$.
-    \item As expectativas de 3 pontos: $\langle Z_0 Z_1 Z_2 \rangle,~ \dots$.
-    \item A expectativa de 4 pontos: $\langle Z_0 Z_1 Z_2 Z_3 \rangle$.
-\end{itemize}
+\[
+\hat{O} = \sum_i c_i P_i, \qquad P_i \in \{I,X,Y,Z\}^{\otimes n}, \quad c_i \in \mathbb{R}.
+\]
 
-A fórmula geral para reconstruir a probabilidade $P(b_0 b_1 b_2 b_3)$, onde $b_k \in \{0,1\}$, é:
-\begin{equation}
-P(b_0 b_1 b_2 b_3) = \frac{1}{16} \sum_{s_0=0}^1 \sum_{s_1=0}^1 \sum_{s_2=0}^1 \sum_{s_3=0}^1 
-\left[ \prod_{j=0}^3 (-1)^{b_j s_j} \right] \langle Z_0^{s_0} Z_1^{s_1} Z_2^{s_2} Z_3^{s_3} \rangle
-\end{equation}
-onde $Z_j^0 = I$ (identidade no \textit{qubit} $j$) e $Z_j^1 = Z_j$.
+Para medir a probabilidade de o circuito colapsar em um estado computacional específico \(\ket{x}\), utiliza-se o operador projetor correspondente:
 
-Este método é uma aplicação direta da transformada inversa de Walsh–Hadamard sobre as expectativas, convertendo-as em probabilidades na base computacional.
+\[
+\hat{P}_x = \ket{x}\bra{x}.
+\]
+
+Em sua forma matricial, o projetor \(\hat{P}_x\) é uma matriz \(2^n\times2^n\) com zeros em todas as entradas exceto um elemento igual a 1 na posição diagonal correspondente ao índice binário de \(x\). Por exemplo, para quatro \emph{qubits} o estado \(\ket{1111}\) tem índice decimal 15, e \(\hat{P}_{1111}\) tem valor unitário apenas nessa entrada diagonal.
+
+\begin{equation*}
+P_{1111} = \begin{pmatrix}
+    0 & 0 & \cdots & 0 \\
+    0 & 0 & \cdots & 0 \\
+    \vdots & \vdots & \ddots & \vdots \\
+    0 & 0 & \cdots & 1
+    \end{pmatrix}_{16\times16}
+\end{equation*}
+
+Essa representação matricial torna direta a implementação numérica em \textit{Qiskit} (por exemplo com \texttt{SparsePauliOp} ou \texttt{Operator}) e também facilita a leitura da relação entre valor esperado e probabilidade de medição quando se trabalha na base computacional.
+
+Para um estado puro \(\ket{\psi}\) o valor esperado de um observável \(\hat{O}\) é dado por
+
+\[
+\braket{\hat{O}} = \braket{\psi | \hat{O} | \psi}.
+\]
+
+No caso mais geral de um estado misto descrito pela matriz densidade \(\rho\), usa-se a forma
+
+\[
+\langle \hat{O} \rangle = \mathrm{Tr}( \rho \hat{O} ).
+\]
+
+Em particular, para o projetor \(P_x = \ket{x}\bra{x}\) obtemos a probabilidade do resultado \(x\) na medição:
+
+\[
+\langle P_x \rangle = \mathrm{Tr}( \rho P_x ) = \bra{x} \rho \ket{x} = \mathrm{Prob}(x),
+\]
+
+que é a expressão discreta (base computacional) da regra de Born. Esta forma é a que se aplica diretamente ao tratamento de circuitos quânticos em computadores discretos e à interpretação dos valores retornados pela classe \texttt{Estimate} empregada neste trabalho.
+
+No \textit{Qiskit}, observáveis construídos como combinações de Pauli podem ser representados e estimados via \texttt{SparsePauliOp} e \texttt{Operator}; para projetores individuais também é possível construir a matriz explícita (sparse) e avaliá-la sobre o estado final obtido pelo circuito. Ao implementar essas construções, atenção deve ser dada à ordenação de \emph{qubits} (endianness) e à correspondência lógica → física usada na transpila\c{c}\~ao para \textit{hardware} real, pois um mapeamento diferente muda a posição do bit alvo na representação matricial e, consequentemente, o índice do projetor.

@@ -54,18 +54,65 @@
 \usepackage{tikz}
 \usepackage{quantikz}
 
-% configuração padrão do listings   
-\lstset{
-   language=Java,
-   extendedchars=true,
-   tabsize=3,
-   basicstyle=\footnotesize\ttfamily,
-   stringstyle=\em,
-   showstringspaces=false 
-}
+% Configuração aprimorada do listings (estilo semelhante ao minted)
+\usepackage{xcolor}
 
-% para referências de acordo com a ABNT
-% precisa instalar o abntex2 antes!!!
+% Definição de cores personalizadas (inspiradas em Monokai/VSCode)
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}  % fundo suave
+\definecolor{codegray}{rgb}{0.4,0.4,0.4}       % comentários
+\definecolor{codestring}{rgb}{0.86,0.22,0.44}  % strings (rosa)
+\definecolor{keywordblue}{rgb}{0.56,0.18,0.67} % palavras-chave (roxo VS Code)
+\definecolor{numbergray}{rgb}{0.6,0.6,0.6}     % números da margem
+\definecolor{lightblue}{rgb}{0.2,0.6,1}
+\definecolor{functioncolor}{rgb}{0.2,0.7,0.9}  % funções (azul claro)
+\definecolor{variablecolor}{rgb}{0.4,0.4,1}    % variáveis (azul)
+\definecolor{builtincolor}{rgb}{0.7,0.2,0.65}  % builtins (roxo VS Code)
+\definecolor{classcolor}{rgb}{0.0,0.6,0.6}     % classes (verde água)
+
+% Configuração aprimorada do listings
+\lstset{
+   language=Python,
+   extendedchars=true,
+   tabsize=2,
+   backgroundcolor=\color{backcolour},
+   basicstyle=\linespread{1}\ttfamily\small,
+   keywordstyle={\color{builtincolor}\bfseries},    % estilo para palavras-chave do Python
+   stringstyle=\color{codestring},                  % strings
+   commentstyle=\color{codegray}\itshape,          % comentários
+   numberstyle=\tiny\color{numbergray},
+   numbersep=8pt,
+   frame=single,
+   rulecolor=\color{gray!50},
+   showstringspaces=false,
+   breaklines=true,
+   breakatwhitespace=true,
+   keepspaces=true,
+   captionpos=b,
+   xleftmargin=10pt, xrightmargin=10pt,
+   aboveskip=10pt, belowskip=10pt,
+   keywords={and,as,assert,break,class,continue,def,del,elif,else,except,False,finally,for,from,global,if,import,in,is,lambda,None,nonlocal,not,or,pass,raise,return,True,try,while,with,yield},
+   classoffset=1,
+   % Classes
+   morekeywords=[1]{Statevector,AerSimulator,Sampler,Estimate,Options,Batch,SparsePauliOp,Operator,QuantumCircuit,QuantumRegister,ClassicalRegister,QiskitRuntimeService,Estimator},
+   keywordstyle=[1]{\color{classcolor}\bfseries},
+   classoffset=2,
+      % Funções Python e Qiskit
+   morekeywords=[2]{mcx,h,draw,setText,getText,main,System,println,save_account,run,to_instruction,inicializa_s,oraculo_Uw,difusor_Us,barrier,measure,from_instruction,probabilities_dict,plot_histogram,from_backend,rodar,mcz_circ,x, transpile, show, subplots,from_operator,generate_preset_pass_manager},
+   keywordstyle=[2]{\color{functioncolor}\mdseries},
+   classoffset=3,
+   % Variáveis e objetos
+   morekeywords=[3]{service,backend,backend_sim,transpiled_circ_sim,result,circuits,qc,n,qubits,bits,QC_Grover,winner,marked_state,ideal_distribution,fig,ax,optim_lvl,num_shots,job_none,job_TREX_Twiling_ZNE_PEA,pub,results,observable,obs,proj,estimator,options,channel,overwrite,set_as_default,token,instance,sampler,target_state,target_index,observable,backend_HW,transpiled,job_DD_Twiling,initial_layout,layout_method,optimization_level,isa_circuit,pm,num_backend_qubits,mcz_gate,i,index, qubit, N, k, pi, sqrt, title, shots, batch},
+   keywordstyle=[3]{\color{variablecolor}},
+   classoffset=4,
+   % Builtins e tipos do Python
+   morekeywords=[4]{print,range,len,int,float,str,bool,list,dict,set,tuple,enumerate,zip,map,filter,open,append,isinstance,super,property,staticmethod,classmethod,abs,all,any,bin,bytearray,bytes,callable,chr,compile,complex,delattr,dir,divmod,eval,exec,format,frozenset,getattr,globals,hasattr,hash,help,hex,id,input,iter,locals,max,memoryview,min,next,object,oct,ord,pow,repr,reversed,round,setattr,slice,sorted,sum,type,vars,Exception},
+   keywordstyle=[4]{\color{builtincolor}\bfseries},
+   classoffset=0
+   }
+   
+   
+   % para referências de acordo com a ABNT
+   % precisa instalar o abntex2 antes!!!
 % http://abntex.codigolivre.org.br/
 % comente se pretende usar outro padrão
 
@@ -108,8 +155,10 @@ FAE-PE Recovery TelEduc Williams UFLA}
 % Dados da monografia, capa: autor, titulo, banca, etc... - SUBSTITUA DE ACORDO
 %==============================================================================
 \author{Marcos Vinicius Figueiredo Sousa}
-\title{Métodos de Mitigação e Supressão de ruídos quânticos em QPUs aplicados ao Algoritmo de Grover.}
-\engtitle{METHODS FOR MITIGATION AND SUPPRESSION OF QUANTUM NOISE IN QPUS APPLIED TO THE GROVER's ALGORITHM.}
+\title{MÉTODOS DE SUPRESSÃO E MITIGAÇÃO DE RUÍDO
+QUÂNTICO EM QPUS APLICADOS AO ALGORITMO DE
+GROVER}
+\engtitle{METHODS FOR SUPPRESSION AND MITIGATION OF QUANTUM NOISE IN QPUS APPLIED TO THE GROVER's ALGORITHM.}
 % \subtitle{Exemplo para os Usuários}
 % \engtitle{Use of Uflamon Class}
 % \engsubtitle{Sample for Users}
@@ -220,7 +269,7 @@ Espaço reservado a epígrafe.\\
 
 % palavras-chave
 \palchaves{Simulação Quântica; Processamento Quântico; Decoerência.}
-\resumo{A computação quântica é uma área emergente da ciência da computação que se baseia nos princípios da mecânica quântica para processar informações. Um dos conceitos fundamentais dessa área é a superposição quântica, que permite que os qubits assumam múltiplos estados simultaneamente, possibilitando a realização de cálculos exponencialmente mais rápidos para certos problemas. Um dos algoritmos de destaque nesse contexto, e foco principal deste trabalho, é o Algoritmo de Grover, utilizado para busca em bases de dados não estruturadas, proporcionando uma aceleração quadrática em relação aos métodos clássicos. Este estudo tem como objetivo analisar a estrutura e o funcionamento do Algoritmo de Grover, avaliando sua eficiência teórica e prática por meio de cálculos analíticos, simulações computacionais e implementações em hardwares quânticos reais. Além disso, serão exploradas técnicas para aprimorar a confiabilidade das execuções em dispositivos quânticos físicos, que são susceptíveis a erros devido à presença de ruído quântico, originado principalmente da interação entre os qubits e o ambiente. Para transpor esses desafios, serão investigados métodos de otimização, supressão e mitigação de ruído, buscando melhorar a precisão dos resultados obtidos nas \textit{Quantum Processing Units} (QPUs). Dessa forma, este trabalho pretende não apenas aprofundar o conhecimento sobre a implementação e aplicabilidade do Algoritmo de Grover, mas também avaliar estratégias que aumentem sua robustez em ambientes ruidosos, contribuindo para o avanço da computação quântica.}  % Resumo (digite aqui o resumo)
+\resumo{A computação quântica é uma área emergente da ciência da computação que se baseia nos princípios da mecânica quântica para processar informações. Um dos conceitos fundamentais dessa área é a superposição quântica, que permite que os qubits assumam múltiplos estados simultaneamente, possibilitando a realização de cálculos exponencialmente mais rápidos para certos problemas. Um dos algoritmos de destaque nesse contexto, e foco principal deste trabalho, é o Algoritmo de Grover, utilizado para busca em bases de dados não estruturadas, proporcionando aceleração quadrática em relação aos métodos clássicos. Este estudo tem como objetivo analisar a estrutura e o funcionamento do Algoritmo de Grover, avaliando sua eficiência teórica e prática por meio de cálculos analíticos, simulações computacionais e implementações em hardwares quânticos reais. Além disso, serão exploradas técnicas para aprimorar a confiabilidade das execuções em dispositivos quânticos físicos, que são susceptíveis a erros devido à presença de ruído quântico, originado principalmente da interação entre os qubits e o ambiente. Para transpor esses desafios, serão investigados métodos de otimização, supressão e mitigação de ruído, buscando melhorar a precisão dos resultados obtidos nas \textit{Quantum Processing Units} (QPUs). Dessa forma, este trabalho pretende não apenas aprofundar o conhecimento sobre a implementação e aplicabilidade do Algoritmo de Grover, mas também avaliar estratégias que aumentem sua robustez em ambientes ruidosos, contribuindo para o avanço da computação quântica.}  % Resumo (digite aqui o resumo)
 
 % keywords devem vir antes do abstract
 \keywords{Quantum Simulation; Quantum Processing; Decoherence.} % keywords
@@ -247,9 +296,9 @@ Espaço reservado a epígrafe.\\
 % descomente para habilitar a lista desejada
 \listoffigures                             % Lista de Figuras
 %\listofilustracoes
-\listofgraficos						       % Lista de Gráficos
+% \listofgraficos						       % Lista de Gráficos
 % \listoftables                            % Lista de Tabelas
-% \listofquadros							   % Lista de Quadros
+\listofquadros							   % Lista de Quadros
 %\listofexemplos
 %\listofteoremas
 \listofsimbolos
@@ -267,8 +316,8 @@ Espaço reservado a epígrafe.\\
 \include{Chapters/ferramentas}
 \include{Chapters/procedimento}
 \include{Chapters/resultados}
-% \include{Chapters/elementos}
 \include{Chapters/conclusao}
+
 %==============================================================================
 % Incluindo bibliografia
 %\bibliographystyle{plain}             % estilo para labels em numeros

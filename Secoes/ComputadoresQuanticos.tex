@@ -1,5 +1,5 @@
 \section{Plataforma \textit{IBM Quantum}}
-\label{sec: plataformaIBM}
+\label{sec:plataformaIBM}
 
 Nesta seção, descreve-se e elucida-se por meio de trechos de códigos exemplos o procedimento adotado para o acesso e preparação da simulação do circuito do Algoritmo de Grover utilizando os recursos computacionais da \textit{IBM Quantum Platform} \cite{IBM_quantum}. Essa plataforma online desenvolvida pela IBM permite a execução de algoritmos em computadores quânticos reais e simuladores avançados disponíveis na nuvem.
 
@@ -7,8 +7,8 @@ O primeiro passo consiste na criação de uma conta na plataforma e posterior au
 
 Diferentemente dos ambientes locais de simulação, como os disponíveis via \texttt{AerSimulator} no \textit{Qiskit}, a \textit{IBM Quantum} exige que até mesmo as simulações ideais sejam submetidas remotamente, exigindo autenticação prévia e conexão à nuvem. Com a migração da plataforma para o novo modelo unificado, o canal de acesso deve ser definido como \verb|ibm_quantum_platform|, e é obrigatória a definição explícita da \textit{instância}.
 
-\subsection{Procedimento de Autenticação}
-\label{subSec: auth}
+\subsection{Procedimento de autenticação}
+\label{subSec:auth}
 
 A seguir, a Figura~\ref{cod:acessaIBM} apresenta um exemplo do código utilizado para salvar e autenticar uma conta na plataforma, utilizando a biblioteca \verb|qiskit_ibm_runtime|:
 
@@ -19,11 +19,11 @@ A seguir, a Figura~\ref{cod:acessaIBM} apresenta um exemplo do código utilizado
 from qiskit_ibm_runtime import QiskitRuntimeService
 
 QiskitRuntimeService.save_account(
-    token="<seu_token>",
-    instance="<sua_instancia>",
-    channel="ibm_quantum_platform",
-    overwrite=True,
-    set_as_default=True
+   token="<seu_token>",
+   instance="<sua_instancia>",
+   channel="ibm_quantum_platform",
+   overwrite=True,
+   set_as_default=True
 )
 service = QiskitRuntimeService()
 \end{lstlisting} 
@@ -35,7 +35,7 @@ O \texttt{token} pode ser obtido no perfil do usuário na plataforma, enquanto a
 
 Após essa configuração inicial, torna-se possível listar os dispositivos disponíveis, verificar seus estados (como filas, fidelidades e número de qubits), selecionar o \textit{backend} desejado e submeter os circuitos para execução.
 
-\subsection*{Fluxo de Execução na Nuvem}
+\subsection*{Fluxo de execução na nuvem}
 
 O processo completo de execução de um circuito na plataforma envolve:
 
@@ -46,10 +46,10 @@ O processo completo de execução de um circuito na plataforma envolve:
     \item Acompanhamento da execução e análise dos resultados.
 \end{itemize}
 
-\subsection{Simulação Ideal via \texttt{Statevector}}
-\label{subSec: simulacaoIdeal}
+\subsection{Simulação ideal via \texttt{Statevector}}
+\label{subSec:simulacaoIdeal}
 
-Essa seção traz um exemplo de código que gera uma distribuição de probabilidades ideal, utilizando a classe \texttt{Statevector} do \texttt{Qiskit}, apresentada na Figura~\ref{cod:simulacaoIdeol}, que simula a evolução do estado quântico de forma exata e livre de ruído. Essa abordagem fornece a expectativa teórica para o comportamento do algoritmo de Grover.
+Essa seção traz um exemplo de código que gera uma distribuição de probabilidades ideal, utilizando a classe \texttt{Statevector} do \texttt{Qiskit}, apresentada na Figura~\ref{cod:simulacaoIdeal}, que simula a evolução do estado quântico de forma exata e livre de ruído. Essa abordagem fornece a expectativa teórica para o comportamento do algoritmo de Grover.
 
 \begin{figure}[!htb]
 \centering
@@ -67,13 +67,13 @@ ax.set_ylabel("Probabilidade")
 plt.show()
 \end{lstlisting}
 {\small Fonte: do autor} 
-\label{cod:simulacaoIdeol} 
+\label{cod:simulacaoIdeal} 
 \end{figure}
 
 Este resultado serve como referência teórica da máxima fidelidade, permitindo a comparação com as demais execuções e a análise da influência dos ruídos nos sistemas quânticos reais.
 
-\subsection{Simulação com Ruído via \textit{AerSimulator}}
-\label{subSec: simulacaoRuido}
+\subsection{Simulação com ruído via \texttt{AerSimulator}}
+\label{subSec:simulacaoRuido}
 
 Essa seção apresenta uma simulação mais próxima da realidade, pois faz uso de informações de ruído da QPU escolhida (definindo \texttt{<nome\_backend>}). Para isso, utiliza a classe \texttt{AerSimulator}, da biblioteca \texttt{qiskit\_aer}. O código exemplo é mostrado na Figura~\ref{cod:simulacaoRuido}. Essa é uma forma de criar uma simulação que busca imitar de forma mais precisa o comportamento prático do circuito, uma vez que a simulação com ruído permite observar a degradação de fidelidade causada por imperfeições reais nos dispositivos quânticos.
 
@@ -100,10 +100,10 @@ circuits.append(transpiled_circ_sim)
 
 Essa abordagem é valiosa para testar e validar circuitos antes da submissão ao \textit{hardware} físico, permitindo ajustes e observação de efeitos de ruído específicos, como erros de porta, leitura e decoerência.
 
-\subsection{Execução em  via \texttt{Sampler}}
-\label{subSec: execucaoQPU}
+\subsection{Execução via \texttt{Sampler}}
+\label{subSec:execucaoSampler}
 
-Por fim, essa última seção traz os procedimentos a serem realizados para a execução em uma QPU. Antes de o circuito ser enviado a alguma QPU propriamente dita, ele precisa ser reescrito em uma linguagem que ela entenda, \textit{i. e.}, o circuito virtual precisa ser reescrito em termos das portas base do \textit{backend} no qual se pretende enviá-lo. Essa é a etapa de compilação mencionada na Seção~\ref{subSec: computadores} e sua implementação é feita com a função \texttt{transpile} conforme mostrado na Figura~\ref{cod:compilacao}.
+Essa seção traz os procedimentos a serem realizados para a execução em uma QPU. Antes de o circuito ser enviado a alguma QPU propriamente dita, ele precisa ser reescrito em uma linguagem que ela entenda, \textit{i. e.}, o circuito virtual precisa ser reescrito em termos das portas base do \textit{backend} no qual se pretende enviá-lo. Essa é a etapa de compilação mencionada na Seção~\ref{subSec:computadores} e sua implementação é feita com a função \texttt{transpile} conforme mostrado na Figura~\ref{cod:compilacaoSampler}.
 
 \begin{figure}[!htb]
 \centering
@@ -116,12 +116,12 @@ transpiled = transpile(QC_Grover, backend_HW,
                        optimization_level=<optim_lvl>)
 \end{lstlisting}
 {\small Fonte: do autor} 
-\label{cod:compilacao} 
+\label{cod:compilacaoSampler} 
 \end{figure}
 
-A definição de <\texttt{nome\_backend}> é o que garante a compilação ideal de acordo com as portas base de cada \textit{backend}, visto que cada tipo de processador pode possuir portas base diferentes. Pode-se também configurar o nível de otimização, explanado na Seção~\ref{subSubSec: otimizacao}, por meio de \texttt{optimization\_level}. Concluída essa etapa, segue-se com o circuito compilado.
+A definição de <\texttt{nome\_backend}> é o que garante a compilação ideal de acordo com as portas base de cada \textit{backend}, visto que cada tipo de processador pode possuir portas base diferentes. Pode-se também configurar o nível de otimização, explanado na Seção~\ref{subSubSec:otimizacao}, por meio de \texttt{optimization\_level}. Concluída essa etapa, segue-se com o circuito compilado.
 
-A Figura~\ref{cod:execucaoSampler} mostra um trecho de exemplo para execução em QPU's que possibilita também utilizar as técnicas de supressão -- \textit{Dynamical Decoupling} (DD) e \textit{Pauli Twirling} introduzidas na Seção~\ref{subSec: supressao} -- disponíveis na classe \texttt{Sampler} da biblioteca \texttt{qiskit\_ibm\_runtime}.
+A Figura~\ref{cod:execucaoSampler} mostra um trecho de exemplo para execução em QPU's que possibilita também utilizar as técnicas de supressão -- \textit{Dynamical Decoupling} (DD) e \textit{Pauli Twirling} introduzidas na Seção~\ref{subSec:supressao} -- disponíveis na classe \texttt{Sampler} da biblioteca \texttt{qiskit\_ibm\_runtime}.
 
 \begin{figure}[!htb]
 \centering
@@ -130,31 +130,122 @@ A Figura~\ref{cod:execucaoSampler} mostra um trecho de exemplo para execução e
 from qiskit_ibm_runtime import SamplerV2 as Sampler, Batch
 
 def rodar():
-    num_shots = <num_shots>
-    with Batch(backend=backend_HW):
-        sampler = Sampler()
-        # Execucao com Dynamical Decoupling + Pauli Twirling
-        sampler.options.dynamical_decoupling.enable = True
-        sampler.options.twirling.enable_gates = True
-        job_DD_Twiling = sampler.run([transpiled], shots=num_shots)
+   num_shots = <num_shots>
+   with Batch(backend=backend_HW):
+      sampler = Sampler()
+      # Execucao com Dynamical Decoupling + Pauli Twirling
+      sampler.options.dynamical_decoupling.enable = True
+      sampler.options.twirling.enable_gates = True
+      job_DD_Twiling = sampler.run([transpiled], shots=num_shots)
 try:
-    rodar()
+   rodar()
 except Exception as e:
-    print(f"Erro: {e}")
+   print(f"Erro: {e}")
 \end{lstlisting}
 {\small Fonte: do autor} 
 \label{cod:execucaoSampler} 
 \end{figure}
 
-A Figura~\ref{cod:execucaoEstimate}, por sua vez, mostra um trecho de exemplo para execução em QPU's que possibilita utilizar as técnicas de mitigação -- \textit{Twirled Readout Error eXtinction} (TREX), \textit{Zero-Noise Extrapolation} (ZNE), \textit{Probabilistic Error Amplification} (PEA), e \textit{Probabilistic Error Cancellation} (PEA) introduzidas na Seção~\ref{subSec: mitigacao} -- disponíveis na classe \texttt{Estimate} da biblioteca \texttt{qiskit\_ibm\_runtime}.
+
+\subsection{Execução via \texttt{Estimate}}
+\label{subSec:execucaoEstimate}
+
+Por fim, essa seção traz um trecho de exemplo para execução em QPU's que possibilita utilizar as técnicas de mitigação -- \textit{Twirled Readout Error eXtinction} (TREX), \textit{Zero-Noise Extrapolation} (ZNE), \textit{Probabilistic Error Amplification} (PEA), e \textit{Probabilistic Error Cancellation} (PEC) introduzidas na Seção~\ref{subSec:mitigacao} -- disponíveis na classe \texttt{Estimate} da biblioteca \texttt{qiskit\_ibm\_runtime}.
+
+Um aspecto crucial na execução em \textit{hardware} real é o mapeamento entre \textit{qubits} lógicos (usados no \refname{sec:circuitoVirtual}) e \textit{qubits} físicos de cada dispositivo. Esse mapeamento é especificado através da variável \texttt{initial\_layout}, que determina em quais \textit{qubits} físicos do \textit{backend} cada \emph{qubit} lógico do circuito será executado. A escolha do mapeamento impacta diretamente a fidelidade do resultado, pois diferentes \textit{qubits} físicos podem ter diferentes taxas de erro, tempos de decoerência e qualidade de conexão. Na implementação, o \texttt{initial\_layout} é usado tanto na compilação (via \texttt{generate\_preset\_pass\_manager}) quanto na construção do observável, onde especifica em quais \textit{qubits} físicos o projetor deve ser medido.
+
+A etapa de compilação é similar àquela feita para o \texttt{Sampler}, mas utiliza a função \\\texttt{generate\_preset\_pass\_manager} conforme mostrado na Figura~\ref{cod:construcaoObservavel}. Para o \texttt{Estimate}, devem ser construídos os observáveis que se deseja medir (vide Apêndice~\ref{ap:apendiceB}). No caso do Algoritmo de Grover, o observável é o projetor sobre o estado marcado, \textit{i. e.}, \( \hat{O} = \ket{1111}\bra{1111} \) para a implementação de quatro qubits. A construção desse observável é feita com a classe \texttt{SparsePauliOp}, também mostrado na Figura~\ref{cod:construcaoObservavel}.
+
+\begin{figure}
+   \centering
+   \caption{Trecho para Construção do Observável.}
+   \label{cod:construcaoObservavel}
+   \begin{lstlisting}{python}
+from qiskit_ibm_runtime import Options, EstimatorV2 as Estimator
+from qiskit.quantum_info import SparsePauliOp, Operator
+from qiskit.transpiler.preset_passmanagers import 
+                                generate_preset_pass_manager
+
+options = Options()
+
+estimator = Estimator(<backend>) # Initialize the estimator
+
+pm = generate_preset_pass_manager(
+   backend=<backend>,
+   initial_layout = <initial_layout>,
+   layout_method="trivial",
+   optimization_level=3,
+)
+
+isa_circuit = pm.run(QC_Grover) # Transpile the circuit
+
+# Create an observable for the target state
+target_state = <target_state>  
+target_index = int(target_state, 2)
+
+proj = np.zeros((2**<num_qubits>, 2**<num_qubits>))
+proj[target_index, target_index] = 1
+
+obs = SparsePauliOp.from_operator(Operator(proj))
+
+num_backend_qubits = backend.num_qubits 
+
+observable = SparsePauliOp("I" * num_backend_qubits)
+
+observable = observable.compose(obs, qargs=<initial_layout>)
+
+# Prepare the circuit and observable for execution
+pub = (isa_circuit, [observable])
+\end{lstlisting}
+\end{figure}
+
+A Figura~\ref{cod:execucaoEstimate}, por sua vez, mostra com detalhes o trecho de exemplo para execução. Note que, nesse caso, é possível combinar várias técnicas de mitigação, como DD, TREX, Twirling, PEC e ZNE + PEA, em uma única execução. Isso permite avaliar o impacto combinado dessas técnicas na melhoria da fidelidade dos resultados obtidos a partir do circuito quântico executado na QPU. 
 
 \begin{figure}[!htb]
 \centering
 \caption{Trecho para Execução em QPU via \texttt{Estimate}.} 
 \begin{lstlisting}{python}
+results = {}
+def rodar():
+  num_shots = <num_shots>
+  with Batch(backend=backend) as batch:
+    estimator = Estimator(mode=batch)
+    # Set number of shots
+    estimator.options.default_shots = num_shots
+    # Disable runtime compilation and error mitigation
+    estimator.options.resilience_level = 0
 
-COLOCAR CODIGO COM ESTIMATE***
+    # 1. No error mitigation
+    job_none = estimator.run([pub])
+    results["No Mitigation"] = job_none
 
+    # 2. Enable Dynamical Decoupling (DD)
+    estimator.options.dynamical_decoupling.enable = True
+    estimator.options.dynamical_decoupling.sequence_type = "XpXm"
+
+    # 3. Enable Readout Error Mitigation (TREX)
+    estimator.options.resilience.measure_mitigation = True
+
+    # 4. Enable Gate Twirling
+    estimator.options.twirling.enable_gates = True
+    estimator.options.twirling.num_randomizations = "auto"
+
+    # 5. Enable PEC
+    estimator.options.resilience.pec_mitigation = True
+    estimator.options.resilience.pec.max_overhead = 100
+    
+    # 6. Enable ZNE + PEA
+    estimator.options.resilience.zne_mitigation = True
+    estimator.options.resilience.zne.amplifier = "pea"
+    estimator.options.resilience.zne.noise_factors = (1, 3, 5)
+    estimator.options.resilience.zne.extrapolator = "exponential"  
+
+    job_TREX_Twiling_ZNE_PEA = estimator.run([pub])
+    results["TREX + Twiling + ZNE + PEA"] = job_TREX_Twiling_ZNE_PEA
+try:
+  rodar()
+except Exception as e:
+  print(f"Erro: {e}")
 \end{lstlisting}
 {\small Fonte: do autor} 
 \label{cod:execucaoEstimate} 
