@@ -12,9 +12,9 @@
 *.blg
 *.lgg
 *.los
+*.loq
 *.synctex
 *.synctex(busy)
-*.loq
 
 # Diretórios temporários
 _build/

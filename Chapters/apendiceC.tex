@@ -12,7 +12,7 @@ onde \(H\) é a porta Hadamard aplicada no qubit alvo da $MCX$.
 
 \subsection*{Demonstração}
 
-A porta $MCZ$ que intenta-se criar possui alvo no último \textit{qubit} apenas, sendo assim, a aplicação das $H$'s deve acontecer somente no último canal. Em termos de portas lógicas e matrizes, isso implica que a Equação~\ref{eq:MCZ}, na verdade, é
+A porta $MCZ$ que se pretende construir tem como alvo apenas último \textit{qubit}, sendo assim, a aplicação das $H$'s deve acontecer somente no último canal. Em termos de portas lógicas e matrizes, isso implica que a Equação~\ref{eq:MCZ}, na verdade, é
 
 \begin{equation}
     MCZ_{16x16} = (I \otimes I \otimes I \otimes H)~MCX_{16x16}~(I \otimes I \otimes I \otimes H)
@@ -40,11 +40,12 @@ Já a matriz de $MCX$ é
 \begin{equation}
     MCX_{16x16} =
     \begin{bmatrix}
-        1 & 0 & \cdots & 0 & 0 \\
-        0 & 1 & \cdots & 0 & 0 \\
-        \vdots & \vdots & \ddots & 0 & 0 \\
-        0 & 0 & 0 & 0 & 1 \\
-        0 & 0 & 0 & 1 & 0 
+        1 & 0 & 0 & \cdots & 0 & 0 \\
+        0 & 1 & 0 & \cdots & 0 & 0 \\
+        0 & 0 & 1 & \cdots & 0 & 0 \\
+        \vdots & \vdots & \vdots & \ddots & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 & 1 & 0 
     \end{bmatrix}
     _{16x16}
 \end{equation}
@@ -69,7 +70,7 @@ Aplicando Hadamard antes e depois da MCX no qubit alvo:
     &= MCZ \ket{c_1 c_2 \dots c_{n-1} t}
 \end{align*}
 
-Portanto, a sequência \(H \cdot MCX \cdot H\) no qubit alvo é equivalente à porta MCZ.
+Portanto, a sequência \(H~MCX~H\) no qubit alvo é equivalente à porta MCZ.
 
 \subsection*{Representação em Qiskit}
 

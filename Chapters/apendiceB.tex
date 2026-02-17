@@ -18,12 +18,12 @@ Para medir a probabilidade de o circuito colapsar em um estado computacional esp
 Em sua forma matricial, o projetor \(\hat{P}_x\) é uma matriz \(2^n\times2^n\) com zeros em todas as entradas exceto um elemento igual a 1 na posição diagonal correspondente ao índice binário de \(x\). Por exemplo, para quatro \emph{qubits} o estado \(\ket{1111}\) tem índice decimal 15, e \(\hat{P}_{1111}\) tem valor unitário apenas nessa entrada diagonal.
 
 \begin{equation*}
-P_{1111} = \begin{pmatrix}
+P_{1111} = \begin{bmatrix}
     0 & 0 & \cdots & 0 \\
     0 & 0 & \cdots & 0 \\
     \vdots & \vdots & \ddots & \vdots \\
     0 & 0 & \cdots & 1
-    \end{pmatrix}_{16\times16}
+    \end{bmatrix}_{16\times16}
 \end{equation*}
 
 Essa representação matricial torna direta a implementação numérica em \textit{Qiskit} (por exemplo com \texttt{SparsePauliOp} ou \texttt{Operator}) e também facilita a leitura da relação entre valor esperado e probabilidade de medição quando se trabalha na base computacional.

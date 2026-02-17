@@ -21,9 +21,8 @@ A princípio, foi necessário determinar o Espaço de Pesquisa $\ket{s}$, \emph{
     \label{eq:espacoPesquisa}
     \notag
     \ket{s} =&~ \frac{1}{4} \sum_{x=0}^{15} \ket{bin(x)} \\
-     =&~ \frac{1}{4} (\ket{0000} +  \ket{0001} +  \ket{0010} +  \ket{0011} +  \ket{0100} +  \ket{0101} +  \ket{0110} + \ket{0111} +  \\
-    \notag{}
-     &~~~~~\ket{1000} +  \ket{1001} +  \ket{1010} +  \ket{1011} +  \ket{1100} +  \ket{1101} +  \ket{1110} +  \ket{1111})
+     =&~ \frac{1}{4} \bigl(\ket{0000} +  \ket{0001} +  \ket{0010} +  \ket{0011} +  \ket{0100} +  \ket{0101} +  \ket{0110} + \ket{0111} + \notag \\
+     &~~~~~\ket{1000} +  \ket{1001} +  \ket{1010} +  \ket{1011} +  \ket{1100} +  \ket{1101} +  \ket{1110} +  \ket{1111}\bigr).
 \end{align}
 %
 \tab\tab Para a implementação do circuito quântico virtual em \emph{Qiskit}, deve-se primeiramente importar as dependências e instanciar as variáveis do circuito. As dependências relacionadas à biblioteca \emph{Qiskit} são apresentadas na Figura~\ref{cod:dependencias} e a importação e declaração dos recursos na Figura~\ref{cod:inicializacao}.
@@ -98,11 +97,11 @@ Para dar prosseguimento, é preciso marcar o estado que se deseja obter, \emph{i
 %
 \begin{align}
     \notag
-    U_f\ket{s} = ~& \frac{1}{4}~U_f~[\ket{0000} + \ket{0001} + \ket{0010} + \ket{0011} + \ket{0100} + \ket{0101} + \ket{0110} +\ket{0111} + \\ \notag
-    &~ \ket{1000} + \ket{1001} + \ket{1010} + \ket{1011} + \ket{1100} + \ket{1101} + \ket{1110} + \ket{1111}] \\
+    U_f\ket{s} = ~& \frac{1}{4}~U_f\bigl(\ket{0000} + \ket{0001} + \ket{0010} + \ket{0011} + \ket{0100} + \ket{0101} + \ket{0110} +\ket{0111} + \\ \notag
+    &~ \ket{1000} + \ket{1001} + \ket{1010} + \ket{1011} + \ket{1100} + \ket{1101} + \ket{1110} + \ket{1111}\bigr) \\
     \label{eq:aplicacaoOraculo}
-    = &~ \frac{1}{4}(\ket{0000} + \ket{0001} + \ket{0010} + \ket{0011} + \ket{0100} + \ket{0101} + \ket{0110} +\ket{0111} + \\ \notag
-    &~ \ket{1000} + \ket{1001} + \ket{1010} + \ket{1011} + \ket{1100} + \ket{1101} + \ket{1110} + -\ket{1111})
+    = &~ \frac{1}{4}\bigl(\ket{0000} + \ket{0001} + \ket{0010} + \ket{0011} + \ket{0100} + \ket{0101} + \ket{0110} +\ket{0111} + \notag\\ 
+    &~ \ket{1000} + \ket{1001} + \ket{1010} + \ket{1011} + \ket{1100} + \ket{1101} + \ket{1110} - \ket{1111}\bigr).
 \end{align}
 %
 Que pode ser expresso de acordo com a matriz $16 \times 16$
@@ -113,7 +112,7 @@ Que pode ser expresso de acordo com a matriz $16 \times 16$
         0 & 1 &  \cdots  & 0\\
         \vdots & \vdots & \ddots & \vdots \\
         0 & 0 &  \cdots  & -1\\
-    \end{bmatrix}_{[16 \times 16]} 
+    \end{bmatrix}_{[16 \times 16]}.
     \label{mtx: aplicacaoOraculo}
 \end{equation*}
 
@@ -183,21 +182,21 @@ O módulo \verb|mcz_circ| apenas é usado para agrupar o conjunto de portas $H~M
 A etapa seguinte é a de amplificação do estado buscado, aplicando uma segunda reflexão $U_s$ (Equaç\~{a}o~\ref{eq:Us}) na resultante da etapa anterior. Conforme demonstrado na Seção~\ref{subSec:difusaoAlg}, Capítulo~\nameref{chap:ferramentas}, a operação que se deseja realizar é dada pela Equação~\ref{eq:aplicacaoDifusao}. Essa operação aplica uma fase negativa a todos os estados ortonormais a $\ket{0}$, \emph{i. e.}, a expansão da Equação~\ref{eq:aplicacaoDifusao} para quatro qubits resulta em:
 
 \begin{equation}
-U_0~\ket{s} = \ket{0000} - \ket{0001} - \ket{0010} - \ket{0011} - \cdots - \ket{1111} 
+U_0~\ket{s} = \ket{0000} - \ket{0001} - \ket{0010} - \ket{0011} - \cdots - \ket{1111},
 \end{equation}
-
-Ou seja, a amplitude $\ket{0000}$ aumenta em relação aos demais que invertem.
+%
+ou seja, a amplitude $\ket{0000}$ aumenta em relação aos demais que invertem.
 
 O difusor é representado pela matriz:
 
 \begin{equation}
 U_0 = -
-\begin{pmatrix}
--1 & 0 & \cdots & 0 \\
-0 & 1 & \cdots & 0 \\
+\begin{bmatrix}
+-1     & 0      & \cdots & 0 \\
+0      & 1      & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & 1
-\end{pmatrix}
+0      & 0      & \cdots & 1
+\end{bmatrix}.
 \label{mtx: Difusao}
 \end{equation}
 
@@ -259,13 +258,13 @@ Para que a Equação~\ref{eq:psi k} seja de fato satisfeita, deve-se determinar 
 \begin{align*}
     k =&~ \frac{\pi}{4}\sqrt{\frac{N}{m}}\\
     =&~ \frac{\pi}{4}\sqrt{16}\\
-    =&~ \pi
+    =&~ \pi.
 \end{align*}
 E como $k$ não pode ser número de ponto flutuante, deve-se arredondar para o inteiro mais próximo, ou seja, para fins práticos,
 \begin{equation}
-    k = 3
+    k = 3.
     \label{eq:k = 3}
-\end{equation}.
+\end{equation}
 Nesse ponto, tem-se que todas as etapas estão concluídas, cabendo, então, uní-las em um único circuito qu\^{a}ntico. Em \emph{Qiskit}, isso pode ser feito com o trecho de código mostrado na Figura~\ref{cod:geraCircuitoCompleto}, que leva em consideração o valor de $k$, por meio de um \textit{loop} \verb|for| no intervalo dado por $k$. Ao final, aplica-se o método \verb|measure()| ao circuito, que realiza a medição dos \textit{qubits}, colapsando o sistema em um dos estados da base computacional, revelando o resultado da busca.
 
 \begin{figure}[!htb]

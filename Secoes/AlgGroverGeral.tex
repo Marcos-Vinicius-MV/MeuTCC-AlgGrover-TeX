@@ -34,8 +34,6 @@ Feito isso, seguiremos para a determinaç\~{a}o do item que queremos encontrar, 
 
 Por fim, utiliza-se o Operador de Difus\~{a}o para aumentar a amplitude do estado marcado, enquanto decresce as demais, sendo assim uma garantia de que na medida final, o resultado obtido seja aquele procurado.
 
-% \subsection{Funcionamento}
-% \label{subsec:funcionamentoAlg}
 Quando trabalha-se com o Algoritmo de Grover, pode-se reduzir o problema a um espaço de duas dimensões, sendo necess\'{a}rio considerar apenas o estado buscado -- \textit{winner}, $\ket{\omega}$ --, e a superposiç\~{a}o uniforme, $\ket{s}$. Contudo, esses n\~{a}o s\~{a}o vetores perpendiculares entre si, uma vez que $\ket{\omega}$ ocorre em superposiç\~{a}o com amplitude $\frac{1}{\sqrt{N}}$. Para contornar isso, cria-se um vetor $\ket{s'}$ que \'{e} perpendicular a $\ket{\omega}$, formando assim o plano bidimensional apresentado na Figura~\ref{subFig:Plano}. Na Figura~\ref{subFig:Amplitude}, est\~{a}o ilustradas as amplitudes dos itens contidos no conjunto, evidenciando o elemento \textit{winner}.
 
 \begin{figure}[ht!]
@@ -60,15 +58,10 @@ Quando trabalha-se com o Algoritmo de Grover, pode-se reduzir o problema a um es
     {\small Fonte: Github/\emph{Qiskit}.}
 \end{figure}
 
-
-% Uma vez introduzida a vis\~{a}o geral sobre como o algoritmo atua, pode-se passar para o estudo de cada uma de suas tr\^{e}s etapas.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \subsection{Preparaç\~{a}o Inicial}
 \label{subsec:prepInicialAlg}
 
-A Preparaç\~{a}o Inicial \'{e} a etapa inicial do algoritmo, na qual o Espaço de Pesquisa \'{e} criado, matematicamente descrito como uma superposiç\~{a}o uniforme e pela Equaç\~{a}o~\ref{eq:superposicao}, e possui tamanho dado por $N = 2^n$, com $n$ sendo o n\'{u}mero de qubits.
+A Preparaç\~{a}o Inicial \'{e} a etapa inicial do algoritmo, na qual o Espaço de Pesquisa \'{e} criado, matematicamente descrito como uma superposiç\~{a}o uniforme dada pela Equaç\~{a}o~\ref{eq:superposicao}, e possui tamanho dado por $N = 2^n$, com $n$ sendo o n\'{u}mero de qubits.
 
 \begin{equation}
     \ket{s} = \frac{1}{\sqrt{N}}\sum_{x = 0}^{N - 1} \ket{bin(x)},
@@ -82,7 +75,7 @@ Se uma mediç\~{a}o for realizada na base $\ket{x}$, de acordo com o Quinto Post
 Em termos de circuito qu\^{a}ntico, a superposiç\~{a}o explicitada pela Equaç\~{a}o~\ref{eq:superposicao} pode ser constru\'{i}da facilmente aplicando a porta Hadamard em cada um dos qubits, que se iniciam no estado fundamental $\ket{0}$, como representado pela Equaç\~{a}o~\ref{eq:preparacaoInicial}.
 %
 \begin{equation}
-    \ket{s} = H^{\otimes n}~\ket{0}^n
+    \ket{s} = H^{\otimes n}~\ket{0}^n.
     \label{eq:preparacaoInicial}
 \end{equation}
 
@@ -92,11 +85,11 @@ O vetor $\ket{s}$ que aparece na Figura~\ref{subFig:Plano} pode ser escrito em c
     \ket{s} = \sin{\theta}\ket{\omega} + \cos{\theta}\ket{s'},
     \label{eq:estadoCoordPolar}
 \end{equation}
-
+%
 em que 
 %
 \begin{equation}
-    \theta = \arcsin{\braket{s|\omega}} = \arcsin{\frac{1}{\sqrt{N}}}
+    \theta = \arcsin{\braket{s|\omega}} = \arcsin{\frac{1}{\sqrt{N}}}.
     \label{eq:thetaValue}
 \end{equation}
 
@@ -141,7 +134,7 @@ Em outras palavras, o Oráculo, denotado por \simboloinline{$U_f$}{Operador Orá
 \end{figure}
 
 
-De modo geral, a construção dos Oráculos no Algoritmo de Grover pode ser realizada utilizando portas lógicas qu\^{a}nticas do tipo $X$ e \simboloinline{$MCZ$}{\textit{Porta Lógica Quântica Z-multi-controlada}}, seguindo a seguinte regra de formação:
+De modo geral, a construção dos Oráculos no Algoritmo de Grover pode ser realizada utilizando portas lógicas qu\^{a}nticas do tipo $X$ e \simboloinline{$MCZ$}{\textit{Porta Lógica Quântica Z-multi-controlada}} (definida matematicamente pela matriz da Equação~\ref{mtx: gateMCZ} e em termos de portas lógicas quânticas pela Figura~\ref{fig:aplicacaoOraculo}), seguindo a seguinte regra de formação:
 
 \begin{enumerate}
 \label{enum: regraFormacaoOraculo}
@@ -158,7 +151,7 @@ De modo geral, a construção dos Oráculos no Algoritmo de Grover pode ser real
 A  aplicação do Operador de Difusão, denotado por \simboloinline{$U_s$}{\textit{Operador de Difus\~{a}o}}, consiste em operações de amplificação sobre o estado $\ket{s}$, gerando uma reflexão adicional do mesmo.
 %
 \begin{equation}
-    U_s = 2~\ket{s}\bra{s} - I
+    U_s = 2~\ket{s}\bra{s} - I.
     \label{eq:Us}
 \end{equation}
 
@@ -190,51 +183,45 @@ Essa transformação mapeia o estado de $\ket{s}$ para $(U_sU_f)\ket{s}$ e compl
 
 Duas reflexões sempre resultam em uma rotação, que leva o estado inicial $\ket{s}$ para mais perto do elemento \textit{winner}, $\ket{\omega}$. 
 
-Como esta é uma reflexão sobre $\ket{s}$, busca-se adicionar uma fase negativa a cada estado ortogonal a $\ket{s}$. A maneira como pode-se fazer isso é aplicar uma transforma\~{a}o que leva o estado $\ket{s} \to \ket{0}$, com isso, em vez de $U_s$, chamar-se-á $U_0$. Dessa forma, a Equaç\~{a}o~\ref{eq:Us} se torna: 
+Como esta é uma reflexão sobre $\ket{s}$, busca-se adicionar uma fase negativa a cada estado ortogonal a $\ket{s}$. A maneira como pode-se fazer isso é aplicar uma transformaç\~{a}o que leva o estado $\ket{s} \to \ket{0}$, com isso, em vez de $U_s$, chamar-se-á $U_0$. Dessa forma, a Equaç\~{a}o~\ref{eq:Us} se torna: 
 %
 \begin{equation}
-    U_0 = 2~\ket{0}\bra{0} - I
+    U_0 = 2~\ket{0}\bra{0} - I.
     \label{eq:Uo}
 \end{equation}
 
-Essa operação aplica uma fase negativa a todos os estados ortonormais a $\ket{0}$, como será demonstrado.
-
-% [TALVEZ COLOCAR NUM APÊNDICE***]
+Essa operação aplica uma fase negativa a todos os estados ortogonais a $\ket{0}$, como será demonstrado.
 
 Aplicação do Operador $U_0$ em $\ket{s}$, com $\ket{s}$ podendo ser um conjunto arbitr\'{a}rio com $N-1$ itens:
 
 \begin{equation*}
-U_0~\ket{s} = \left(2\ket{0}\bra{0} - I\right) \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)},
+U_0~\ket{s} = \left(2\ket{0}\bra{0} - I\right) \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)}.
 \end{equation*}
 
 Expandindo, tem-se:
 
-\begin{equation*}
-2~\ket{0}\bra{0} \left( \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)}\right) = \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)}
-\end{equation*}
-
 \begin{equation}
-2~\ket{0} \left( \sum_{x=0}^{N-1} \braket{0|bin(x)}\right) = \sum_{x=0}^{N-1} \ket{bin(x)}
+U_0~\ket{s} = 2~\ket{0}\bra{0} \left( \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)}\right) - \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)}
 \label{eq:aplicacaoDifusor 2}
 \end{equation}
-%
+
 Como $\braket{0|bin(x)} = 1$ apenas se $x = 0$ (enquanto todos os outros termos se tornam $0$),  o único termo que sobrevive é:
 %
 \begin{equation*}
-    2\ket{0}{\braket{0|bin(0)}} = 2\ket{0}\braket{0|0} = 2\ket{0} = 2\ket{bin(0)}
+    2\ket{0}{\braket{0|bin(0)}} = 2\ket{0}\braket{0|0} = 2\ket{0} = 2\ket{bin(0)}.
 \end{equation*}
 
 Então, em síntese, tem-se:
 %
 \begin{align}
 \notag
-U_0~\ket{s} = &2~\ket{bin(0)} - \sum_{x=0}^{N-1} \ket{bin(x)} \\ 
+U_0~\ket{s} = &\frac{2}{\sqrt{N}}~\ket{bin(0)} - \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1} \ket{bin(x)} \\ 
 \notag
-= &2~\ket{bin(0)} - \ket{bin(0)} - \ket{bin(1)} - \ket{bin(2)} - \dots - \ket{bin(N-1)} \\ 
-= &\ket{bin(0)} - \sum_{x=1}^{N-1} \ket{bin(x)}
+= &\frac{2}{\sqrt{N}}~\ket{bin(0)} - \frac{1}{\sqrt{N}} \bigl(\ket{bin(0)} + \ket{bin(1)} + \ket{bin(2)} + \dots + \ket{bin(N-1)}\bigr)\\ 
+= &\frac{1}{\sqrt{N}} \ket{bin(0)} - \frac{1}{\sqrt{N}} \sum_{x=1}^{N-1} \ket{bin(x)}.
 \label{eq:aplicacaoDifusao}
 \end{align}
-%
+
 Ou seja, a amplitude $\ket{bin(0)}$ aumenta em relação aos demais que invertem.
 
 Tendo sido demonstrada a forma matemática, passa-se agora para a apresentação da obtenção do circuito qu\^{a}ntico que realiza essa operação. 
@@ -242,7 +229,7 @@ Tendo sido demonstrada a forma matemática, passa-se agora para a apresentação
 O Operador de Difusão em termos de portas lógicas é dado por:
 %
 \begin{equation}
-    U_s = H^{\otimes n}~U_0~H^{\otimes n}
+    U_s = H^{\otimes n}~U_0~H^{\otimes n}.
     \label{gate: operadorDifusao}
 \end{equation}
 
@@ -251,8 +238,10 @@ Como já visto, a atuação de $U_0$ é aplicar uma fase negativa a todos os est
 \begin{enumerate}
 \label{enum: difusor}
     \item Aplicação de portas $X$ em todos canais para \textit{bit-flip} dos estados;
-    \[\ket{00\cdots0} \to \ket{11\cdots1} \]
-    \item Aplicação de porta $MCZ$, com alvo no último canal, pois dessa forma o último estado recebe uma inversão de fase;
+    \begin{equation*}
+        \ket{00\cdots0} \to \ket{11\cdots1}.
+    \end{equation*}
+    \item Aplicação de porta $MCZ$, com alvo no último canal, pois dessa forma o último estado recebe uma inversão de fase;\\
     \begin{equation}
     MCZ_{[N \times N]}  =
     \begin{bmatrix}
@@ -260,27 +249,29 @@ Como já visto, a atuação de $U_0$ é aplicar uma fase negativa a todos os est
         0 & 1 &  \cdots  & 0\\
         \vdots & \vdots & \ddots & \vdots \\
         0 & 0 &  \cdots & -1\\
-    \end{bmatrix}_{[N \times N]}
+    \end{bmatrix}_{[N \times N]}.
     \label{mtx: gateMCZ}
 \end{equation}
     \item Novamente aplica-se portas $X$ para desfazer os \textit{bit-flips}.
-    \[\ket{11\cdots1} \to \ket{00\cdots0} \]
+    \begin{equation*}
+        \ket{11\cdots1} \to \ket{00\cdots0}.
+    \end{equation*}
 \end{enumerate}
 
 Após a última etapa, o resultado obtido é:
-
+%
 \begin{equation*}
-    \begin{bmatrix}
+    -\begin{bmatrix}
         -1 & 0 &  \cdots  & 0\\
         0 & 1 &  \cdots  & 0\\
         \vdots & \vdots & \ddots & \vdots \\
         0 & 0 &  \cdots & 1\\
-    \end{bmatrix}_{[N \times N]}
+    \end{bmatrix}_{[N \times N]}.
 \end{equation*}
 
 Ou seja, existe ainda uma fase global em $U_0$, de modo que o Operador de Difusão, em termos de portas lógicas, é:
 \begin{equation}
-    U_0 = -X^{\otimes n}~MCZ~X^{\otimes n}
+    U_0 = -X^{\otimes n}~MCZ~X^{\otimes n}.
     \label{gate: difusor}
 \end{equation}
 
@@ -290,22 +281,22 @@ O trecho de circuito descrito em Equação~\ref{gate: difusor} está mostrado na
 \centering
 \caption{Operador de Difus\~{a}o parcial}
 \label{fig:difusor} 
-\begin{quantikz}
+\scalebox{1}{\begin{quantikz}%[scale=0.9, transform shape]
 \lstick{$q_0$}       & \gate{X} & \qw      & \ctrl{1}   & \qw       & \gate{X}  & \qw \\
 \lstick{$q_1$}       & \gate{X} & \qw      & \ctrl{2}   & \qw       & \gate{X}  & \qw \\
 \lstick{$\vdots$}    &~\vdots~  &          &            & \qw       &~\vdots~   & \qw \\
 \lstick{$q_{n-1}$}   & \gate{X} & \qw      & \gate{Z}   & \qw       & \gate{X}  & \qw \\
 \lstick{$c: n$}      & \cw      & \cw      & \cw        & \cw       & \cw       & \cw
-\end{quantikz}
+\end{quantikz}}
 
 \vspace{.3em}
 {\small Fonte: do autor} 
 \end{figure}
 
-Considerando as Equações~\ref{gate: operadorDifusao} e~\ref{gate: difusor}. Tem-se que o Operador de Difusão completo em portas lógicas qu\^{a}nticas são dados pela Equação~\ref{gate: operadorDifusaoCompleto} e pela Figura~\ref{fig:operadorDifusaoCompleto}.
+Nesse ponto, deve-se gerar a transformação que retorna de $\ket{0} \to \ket{s}$ descrita pela Equação~\ref{gate: operadorDifusao}. Tem-se,então, que o Operador de Difusão completo em portas lógicas qu\^{a}nticas são dados pela Equação~\ref{gate: operadorDifusaoCompleto} e pela Figura~\ref{fig:operadorDifusaoCompleto}.
 
 \begin{equation}
-    U_s = H^{\otimes n}~X^{\otimes n}~MCZ~X^{\otimes n}~H^{\otimes n}
+    U_s = H^{\otimes n}~X^{\otimes n}~MCZ~X^{\otimes n}~H^{\otimes n}.
     \label{gate: operadorDifusaoCompleto}
 \end{equation}
 
@@ -315,13 +306,13 @@ Note que a fase negativa não foi acrescentada, pois não precisa ser considerad
 \centering
 \caption{Operador de Difus\~{a}o completo}
 \label{fig:operadorDifusaoCompleto} %rotulo para refencia
-\begin{quantikz}
+\scalebox{1}{\begin{quantikz}%[scale=0.9, transform shape]
 \lstick{$q_0$}       & \gate{H} & \gate{X} &          & \ctrl{1} &          & \gate{X} & \gate{H} & \qw \\
 \lstick{$q_1$}       & \gate{H} & \gate{X} &          & \ctrl{2} &          & \gate{X} & \gate{H} & \qw \\
 \lstick{$\vdots$}    &~\vdots~  &~\vdots~  &          &          &          & ~\vdots~ & ~\vdots~ & \qw \\
 \lstick{$q_{n-1}$}   & \gate{H} & \gate{X} & \qw      & \gate{Z} & \qw      & \gate{X} & \gate{H} & \qw \\
 \lstick{$c: n$}      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw      & \cw
-\end{quantikz}
+\end{quantikz}}
 
 \vspace{.3em}
 {\small Fonte: do autor} 
@@ -334,13 +325,13 @@ Afim de otimizar o resultado, a aplicação do \nameref{subSec:oraculoAlg} e do 
 %
 \begin{equation}
     \label{eq:psi k}
-    \ket{\psi_k} = (U_sU_f)^k\ket{s}
+    \ket{\psi_k} = (U_sU_f)^k\ket{s}.
 \end{equation}
 
 O número ideal $k$ de iterações necessárias para que $\ket{\omega}$ seja obtido é dado por
 
 \begin{equation}
-    k = \frac{\pi}{4}\sqrt{\frac{N}{m}}
+    k = \frac{\pi}{4}\sqrt{\frac{N}{m}},
     \label{eq:k value}
 \end{equation}
 %
